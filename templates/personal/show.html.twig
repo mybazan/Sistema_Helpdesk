@@ -1,0 +1,154 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Personal{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Personal ID: {{ personal.id }}</b></h1>
+        <div class="align-items-center justify-content-end">
+          {% if is_granted('PERSONAL_EDITAR') %}
+            <a href="{{ path('personal_edit',{"id":personal.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+              <i class="fa fa-edit"></i> &nbsp; Editar
+            </a>
+          {% endif %}
+          <a href="{{ path('personal_index') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver al listado
+          </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+
+  <div class="col">
+    <div class="table-responsive mt-3 pb-3">
+      <table class="table">
+        <tbody>
+          
+          {# Nombre #}
+          <tr>
+            <th width="150" class="text-end">Nombre:</th>
+            <td class="align-middle">{{ personal.apellido ~ ', ' ~ personal.nombre }}</td>
+          </tr> 
+          {# Dni #}
+          <tr>
+            <th width="150" class="text-end">Dni:</th>
+            <td class="align-middle">{{ personal.dni }}</td>
+          </tr>
+          {# Cuil #}
+          <tr>
+            <th width="150" class="text-end">Cuil:</th>
+            <td class="align-middle">{{ personal.cuil }}</td>
+          </tr>   
+          {# Email #}
+          <tr>
+            <th width="150" class="text-end">Email:</th>
+            <td class="align-middle">{{ personal.email }}</td>
+          </tr> 
+          {# Telefono #}
+          <tr>
+            <th width="150" class="text-end">Teléfono:</th>
+            <td class="align-middle">{{ personal.telefono }}</td>
+          </tr> 
+          {# Ubicacion #}
+          <tr>
+            <th width="150" class="text-end">Ubicación:</th>
+            <td class="align-middle">{% if personal.ubicacion %}{{ personal.ubicacion.nomenclatura }}{% else %} ------- {% endif %}</td>
+          </tr>             
+        </tbody>
+      </table>
+    </div>
+     {# EQUIPOS #}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4 my-4">
+        <h1 class="h4 mb-0 text-dark"><b>Equipos a cargo:</b></h1>
+        <div class="align-items-center justify-content-end">
+          {% if is_granted('PERSONAL_EDITAR') %}
+            <a href="{{ path('eleccion_equipo_personal',{"id":personal.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+              <i class="fa fa-plus"></i> &nbsp; Agregar Equipo
+            </a>
+          {% endif %}          
+        </div>
+    </div>    
+    <div class="table-responsive mt-3 pb-3 mx-5">
+      {% set equiposActuales = personal.equipos|filter(e => e.isActual) %}
+      {% if equiposActuales|length > 0 %}
+      <table class="table">
+        <thead>
+            {# EQUIPO - TIPO #}
+            <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                Tipo
+            </th>
+            {# EQUIPO - NOMBRE #}
+            <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                Nombre
+            </th>
+            {# EQUIPO - MAC #}
+            <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+              Mac
+            </th>
+            {# EQUIPO - IP #}
+            <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+              Ip
+            </th>
+            {# EQUIPO - REPARTICION #}
+            <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+              Repartición
+            </th>
+            <th></th>
+        </thead>
+        {# END Títulos de tabla #}
+
+        {# Contenido de tabla #}
+        <tbody>
+        {% for e in equiposActuales %}
+          <tr>
+              <td class="align-middle td-cursor cursorPointer">{{ e.equipo.tipo.nombre  }}</td>
+              <td class="align-middle td-cursor cursorPointer">{{ e.equipo.nombre  }}</td>
+              <td class="align-middle td-cursor cursorPointer">{{ e.equipo.mac }}</td>
+              <td class="align-middle td-cursor cursorPointer">{{ e.equipo.ip }}</td>
+              <td class="align-middle td-cursor cursorPointer">{{ e.equipo.ubicacion ? e.equipo.ubicacion.nomenclatura : '-' }}</td>
+              <td>
+                {% if is_granted('PERSONAL_EDITAR') %}
+                <button class="btn btn-sm btn-danger" data-bs-target="#modalDeleteUsuario{{e.id}}" data-bs-toggle="modal"><i class="fa fa-trash"></i></button>
+                {% endif %}
+              </td>
+          </tr>
+          {% endfor %}
+        </tbody>  
+      </table>
+      {% else %}
+      <h3 class="h5 mb-0 text-danger">No tiene ningún equipo a cargo...</h3>
+      {% endif %}
+    </div>
+  </div>
+  
+{% endblock rowMain %}
+
+{% block modal_content  %}
+      {# Modal Eliminar Usuarios #}
+      {% for e in personal.equipos|filter(eq => eq.isActual) %}
+      <div class="modal fade" id="modalDeleteUsuario{{e.id}}" aria-hidden="true" aria-labelledby="modalActionDelUsuarioLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="modalActionDelUsuarioLabel">Eliminar Equipo a Cargo</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Está por eliminar el equipo <b>{{ e.equipo.nombre ~ ' - ' ~ e.equipo.tipo.nombre}}</b>.<br></p>
+            </div>
+            <div class="modal-footer">
+                
+                <button class="btn btn-primary" type="submit" onClick="window.location='{{ path('eliminar_equipo_personal', {'id': e.id}) }}'">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  <i class="fas fa-redo"></i>&nbsp
+                  Cancelar
+                </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+{% endblock modal_content  %}

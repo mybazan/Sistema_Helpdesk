@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Informe Técnico - {{ equipo.nombre }}</title>
+		<style>
+			@page {
+				size: A4;
+				padding: 0;
+				margin: 0.5cm 1cm 1.5cm 2.5cm;
+				width: 21cm;
+				height: 29.7cm;
+			}
+			body {
+				padding: 0;
+				margin: 0;
+				font-family: helvetica !important;
+			}
+			.listado {
+				height: auto;
+				padding: 0;
+				border: 0 double #050404 !important;
+			}
+			.listado-encabezado-texto {
+				text-align: center;
+			}
+			.listado-encabezado-texto > h5 {
+				margin: 0 0 2px;
+			}
+			.listado-encabezado-texto > h4 {
+				margin: 15px 0 5px;
+			}
+			.listado-encabezado-imagen {
+				margin: 0;
+				padding-top: 6;
+				text-align: center;
+			}
+			.listado-cuerpo {
+				margin: 0.3cm 0.5cm 0;
+			}
+			.listado-cuerpo > h5 {
+				margin-bottom: 0;
+			}
+			.table-header {
+				display: table-header-group;
+			}
+			.tabla-fila-titulos {
+				text-align: center;
+				padding: 0.1cm 0 0.1cm 0.2cm;
+				font-size: 0.9em;
+				font-weight: bold;
+				background-color: #B4B4B4;
+			}
+			.tabla-fila-titulos-dos {
+				text-align: center;
+				padding: 0.1cm 0 0.1cm 0.2cm;
+				font-size: 0.9em;
+				font-weight: bold;
+				background-color: rgb(145, 175, 182);
+			}
+			.tabla-fila-titulos > td {
+				padding: 0.3cm 0 0.3cm 0.2cm;
+				font-size: 0.9em;
+				border-top: 2px solid black;
+				border-bottom: 2px solid black;
+			}
+			.tabla-fila-contenido {
+				text-align: center;
+				padding: 0.1cm 0 0.1cm 0.2cm;
+				font-size: 0.8em;
+				border-bottom: 1px solid gray;
+			}
+			.tabla-fila-contenido > td {
+				padding: 0.2cm 0;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 10px;
+				border: 2px solid black;
+			}
+			.two-columns {
+				display: flex;
+				justify-content: space-between;
+			}
+			.column {
+				width: 48%;
+			}
+			.footer {
+				margin-top: 50px;
+				font-size: 0.8em;
+				text-align: right;
+			}
+			.no-records {
+				text-align: center;
+				padding: 10px;
+				font-style: italic;
+				color: #666;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="listado">
+			<div class="listado-encabezado-texto">
+				<h5>SISTEMA DE SOPORTE</h5>
+				<h5>INVENTARIO DE EQUIPOS</h5>
+			</div>
+
+			<div class="listado-encabezado-imagen">
+				<img src="data:image/png;base64,{{ logo }}" width="50">
+			</div>
+
+			<div class="listado-encabezado-texto">
+				<h4>INFORME TÉCNICO DEL EQUIPO</h4>
+			</div>
+			<p>Documento generado: {{ fechaReporte|date('d/m/Y H:i') }}</p>
+
+			<div class="listado-cuerpo">
+				<!-- Sección Datos Básicos -->
+				<div class="two-columns">
+					<div class="column" style="width: 100%;">
+						<table style="width: 100%;">
+							<thead class="table-header">
+								<tr class="tabla-fila-titulos">
+									<td colspan="2" style="padding: 10px;">Detalles Principales</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tabla-fila-contenido">
+									<td style="width: 8rem; padding: 8px; text-align: right;">Tipo</td>
+									<td style="padding: 8px; text-align: left;">{{ equipo.tipo.nombre }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Nombre</td>
+									<td style="padding: 8px; text-align: left;">{{ equipo.nombre }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Condición</td>
+									<td style="padding: 8px; text-align: left;">{{ condiciones[equipo.condicion] ?? 'Sin especificar' }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Marca</td>
+									<td style="padding: 8px; text-align: left;">{{ planilla.marca|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Modelo</td>
+									<td style="padding: 8px; text-align: left;">{{ planilla.modelo|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">N° Serie</td>
+									<td style="padding: 8px; text-align: left;">{{ planilla.nroSerie|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">N° Inventario</td>
+									<td style="padding: 8px; text-align: left;">{{ planilla.nroInventario|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Dirección IP</td>
+									<td style="padding: 8px; text-align: left;">{{ equipo.ip|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Dirección MAC</td>
+									<td style="padding: 8px; text-align: left;">{{ equipo.mac|default('-') }}</td>
+								</tr>
+								<tr class="tabla-fila-contenido">
+									<td style="padding: 8px; text-align: right;">Observación</td>
+									<td style="padding: 8px; text-align: left;">{{ equipo.observacion|default('-') }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Sección Especificaciones Técnicas -->
+				{% if bloques.show_especificaciones is defined and bloques.show_especificaciones|length > 0 %}
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td colspan="2">Especificaciones Técnicas</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for espec in bloques.show_especificaciones %}
+								<tr class="tabla-fila-contenido">
+									<td style="width: 8rem; padding: 8px; text-align: right;">
+										{% if espec == 'memoria_ram' %}Memoria RAM
+										{% elseif espec == 'personas_registradas' %}Personas Registradas
+										{% elseif espec == 'capacidad_registros' %}Capacidad de Registros
+										{% elseif espec == 'tiempo_grabacion' %}Tiempo de Grabación
+										{% elseif espec == 'resolucion_grabacion' %}Resolución de Grabación
+										{% elseif espec == 'canales_libres' %}Canales Libres
+										{% elseif espec == 'ups' %}UPS
+										{% else %}
+											{{ espec|replace({'_': ' '})|capitalize }}
+										{% endif %}
+									</td>
+									<td style="width: 60%; padding: 8px; text-align: left;">
+										{% if espec == 'procesador' %}
+											{{ planilla.procesador|default('-') }}
+										{% elseif espec == 'memoria_ram' %}
+											{{ planilla.memoriaRAM|default('-') }}
+											GB
+										{% elseif espec == 'fuente' %}
+											{{ planilla.fuente|default('-') }}
+										{% elseif espec == 'monitor' %}
+											{{ planilla.monitor|default('-') }}
+										{% elseif espec == 'ups' %}
+											{{ planilla.ups|default('-') }}
+										{% elseif espec == 'red' %}
+											{{ planilla.red|default('-') }}
+										{% elseif espec == 'observacion' %}
+											{{ planilla.observacion|default('-') }}
+										{% elseif espec == 'toner' %}
+											{{ planilla.toner|default('-') }}
+										{% elseif espec == 'drum' %}
+											{{ planilla.drum|default('-') }}
+										{% elseif espec == 'puertos' %}
+											{{ planilla.puertos|default('-') }}
+										{% elseif espec == 'velocidad' %}
+											{{ planilla.velocidad|default('-') }}
+										{% elseif espec == 'canales' %}
+											{{ planilla.canales|default('-') }}
+										{% elseif espec == 'canales_libres' %}
+											{{ planilla.canalesLibres|default('-') }}
+										{% elseif espec == 'resolucion_grabacion' %}
+											{{ planilla.resolucionGrabacion|default('-') }}
+										{% elseif espec == 'tiempo_grabacion' %}
+											{{ planilla.tiempoEstimadoGrabacion|default('-') }}
+										{% elseif espec == 'megapixeles' %}
+											{{ planilla.megapixeles|default('-') }}
+										{% elseif espec == 'personas_registradas' %}
+											{{ planilla.cantidadPersonasCargadas|default('-') }}
+										{% elseif espec == 'capacidad_registros' %}
+											{{ planilla.capacidadCarga|default('-') }}
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% endif %}
+
+				<!-- Sección Almacenamiento -->
+				{% if bloques.show_almacenamiento %}
+					<h4>DATOS DE ALMACENAMIENTO</h4>
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td>Tipo</td>
+								<td>Capacidad</td>
+								<td>Rol</td>
+								<td>Observación</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% if planilla and planilla.almacenamientos|length > 0 %}
+								{% for almacenamiento in planilla.almacenamientos %}
+									<tr class="tabla-fila-contenido">
+										<td>{{ almacenamiento.tipo|default('-') }}</td>
+										<td>{{ almacenamiento.capacidad|default('-') }} GB</td>
+										<td>
+											{% set roles = ['Principal', 'Secundario', 'Terciario', 'Backup', 'Sin Uso'] %}
+											{{ roles[almacenamiento.rol - 1]|default('-') }}
+										</td>
+										<td>{{ almacenamiento.observacion|default('-') }}</td>
+									</tr>
+								{% endfor %}
+							{% else %}
+								<tr class="tabla-fila-contenido">
+									<td colspan="4" class="no-records">No hay dispositivos de almacenamiento registrados</td>
+								</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				{% endif %}
+
+				<!-- Sección Sistemas Operativos -->
+				{% if bloques.show_sistemas_operativos %}
+					<h4>DATOS DE SISTEMAS OPERATIVOS</h4>
+					{% if planilla and planilla.sistemasOperativos|length > 0 %}
+						{% for so in planilla.sistemasOperativos %}
+							<div style="margin-bottom: 20px;">
+								<table>
+									<thead class="table-header">
+										<tr class="tabla-fila-titulos">
+											<td>Sistema Operativo</td>
+											<td>Versión</td>
+											<td colspan="2">Observación</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="tabla-fila-contenido">
+											<td>{{ so.nombre|default('-') }}</td>
+											<td>{{ so.version|default('') }}</td>
+											<td colspan="2">{{ so.observacion|default('-') }}</td>
+										</tr>
+									</tbody>
+									{% if so.accesos|length > 0 %}
+										<thead class="table-header">
+											<tr class="tabla-fila-titulos">
+												<td>Aplicación</td>
+												<td>Usuario</td>
+												<td>Contraseña</td>
+												<td>Observación</td>
+											</tr>
+										</thead>
+										<tbody>
+											{% for acceso in so.accesos %}
+												<tr class="tabla-fila-contenido">
+													<td>{{ acceso.aplicacion|default('-') }}</td>
+													<td>{{ acceso.usuario|default('-') }}</td>
+													<td>{{ acceso.clave }}</td>
+													<td>{{ acceso.observacion|default('-') }}</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									{% endif %}
+								</table>
+							</div>
+						{% endfor %}
+					{% else %}
+						<table>
+							<thead class="table-header">
+								<tr class="tabla-fila-titulos-dos">
+									<td>Sistemas Operativos</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tabla-fila-contenido">
+									<td class="no-records">No hay sistemas operativos registrados</td>
+								</tr>
+							</tbody>
+						</table>
+					{% endif %}
+				{% endif %}
+
+				<!-- Sección Accesos Generales -->
+				{% if bloques.show_accesos %}
+					<h4>DATOS DE ACCESOS</h4>
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td>Aplicación</td>
+								<td>Usuario</td>
+								<td>Contraseña</td>
+								<td>Observación</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% if planilla and planilla.accesos|length > 0 %}
+								{% for acceso in planilla.accesos %}
+									<tr class="tabla-fila-contenido">
+										<td>{{ acceso.aplicacion|default('-') }}</td>
+										<td>{{ acceso.usuario|default('-') }}</td>
+										<td>{{ acceso.clave }}</td>
+										<td>{{ acceso.observacion|default('-') }}</td>
+									</tr>
+								{% endfor %}
+							{% else %}
+								<tr class="tabla-fila-contenido">
+									<td colspan="4" class="no-records">No hay accesos registrados</td>
+								</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				{% endif %}
+
+				<!-- Sección Historial -->
+				{% if bloques.show_historial %}
+					<h4>DATOS DE HISTORIALES</h4>
+					{% set historialUbicaciones = historiales|filter(h => h.esUbicacion == 1) %}
+					{% set historialRed = historiales|filter(h => h.esUbicacion == 0) %}
+
+					<!-- Sección Ubicaciones -->
+					<h5>Historial de Ubicaciones</h5>
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td>Fecha Inicio</td>
+								<td>Fecha Fin</td>
+								<td>Ubicación</td>
+								<td>Modificado por</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for historial in historialUbicaciones %}
+								<tr class="tabla-fila-contenido">
+									<td>{{ historial.fechaInicio|date('d/m/Y') }}</td>
+									<td>{{ historial.fechaFin ? historial.fechaFin|date('d/m/Y') : 'Actual' }}</td>
+									<td>{{ historial.ubicacion ? historial.ubicacion.nomenclatura : '-' }}</td>
+									<td>{{ historial.modificadoPor }}</td>
+								</tr>
+							{% else %}
+								<tr class="tabla-fila-contenido">
+									<td colspan="4" class="no-records">No hay historial de ubicaciones registrado</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+					<!-- Sección IP y Host -->
+					<h5>Historial de IP y Host</h5>
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td>Fecha Inicio</td>
+								<td>Fecha Fin</td>
+								<td>IP</td>
+								<td>Host</td>
+								<td>Modificado por</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for historial in historialRed %}
+								<tr class="tabla-fila-contenido">
+									<td>{{ historial.fechaInicio|date('d/m/Y') }}</td>
+									<td>{{ historial.fechaFin ? historial.fechaFin|date('d/m/Y') : 'Actual' }}</td>
+									<td>{{ historial.ip|default('-') }}</td>
+									<td>{{ historial.host|default('-') }}</td>
+									<td>{{ historial.modificadoPor }}</td>
+								</tr>
+							{% else %}
+								<tr class="tabla-fila-contenido">
+									<td colspan="5" class="no-records">No hay historial de red registrado</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+					<!-- Sección Usuarios del Equipo -->
+					<h5>Historial de Usuarios</h5>
+					<table>
+						<thead class="table-header">
+							<tr class="tabla-fila-titulos">
+								<td>Fecha Inicio</td>
+								<td>Fecha Fin</td>
+								<td>Usuario</td>
+								<td>Asignado por</td>
+							</tr>
+						</thead>
+						<tbody>
+							{% if usuariosEquipo|length > 0 %}
+								{% for usuarioEquipo in usuariosEquipo %}
+									<tr class="tabla-fila-contenido" style="{{ usuarioEquipo.isActual ? 'font-weight: bold;' : '' }}">
+										<td>{{ usuarioEquipo.fechaInicio|date('d/m/Y') }}</td>
+										<td>{{ usuarioEquipo.fechaFin ? usuarioEquipo.fechaFin|date('d/m/Y') : '-' }}</td>
+										<td>{{ usuarioEquipo.usuario.nombreCompleto }}</td>
+										<td>{{ usuarioEquipo.modificadoPor|default('-') }}</td>
+									</tr>
+								{% endfor %}
+							{% else %}
+								<tr class="tabla-fila-contenido">
+									<td colspan="4" class="no-records">No hay usuarios registrados para este equipo</td>
+								</tr>
+							{% endif %}
+						</tbody>
+					</table>
+
+				{% endif %}
+			</div>
+		</div>
+	</body>
+</html>

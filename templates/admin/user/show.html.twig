@@ -1,0 +1,124 @@
+{% extends "base/index.html.twig" %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Usuario ID: {{ user.id }}</b></h1>
+        <div class="align-items-center justify-content-end">
+          {% if is_granted('USERS_EDITAR') %}
+            <a href="{{ path('app_admin_edit_user',{"id":user.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+              <i class="fa fa-edit"></i> &nbsp; Editar
+            </a>
+          {% endif %}
+          <a href="{{ path('app_admin_users') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver al listado
+          </a>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+  <div class="col">
+    
+    {% if user.suspended %}
+      <div class="alert alert-danger" role="alert">
+        <div class="alert-suspended">El usuario se encuentra suspendido.</div>
+      </div>
+    {% endif %}
+
+    <div class="table-responsive mt-3 pb-3">
+      <table class="display table table-hover" >
+        <tbody>
+          {# Nombre #}
+            <tr>
+              <th width="150" class="text-end">Nombre:</th>
+              <td >{{ user.nombre }}</td>
+            </tr>
+            {# Apellido #}
+            <tr>
+              <th width="150" class="text-end">Apellido:</th>
+              <td>{{ user.apellido }}</td>
+            </tr>
+            {# Email #}
+            <tr>
+              <th width="150" class="text-end">Email:</th>
+              <td>{{ user.email }}</td>
+            </tr>
+            {# Usuario #}
+            <tr>
+              <th width="150" class="text-end">Usuario:</th>
+              <td>{{ user.username }}</td>
+            </tr>
+            {# DNI #}
+            <tr>
+              <th width="150" class="text-end">DNI:</th>
+              <td>{{ user.dni is empty ? "-" : user.dni }}</td>
+            </tr>
+            {# CUIL #}
+            <tr>
+              <th width="150" class="text-end">CUIL:</th>
+              <td>{{ user.cuil is empty ? "-" : user.cuil }}</td>
+            </tr>
+            {# Teléfono #}
+            <tr>
+              <th width="150" class="text-end">Teléfono:</th>
+              <td>{{ user.telefono is empty ? "-" : user.telefono }}</td>
+            </tr>
+            {# Dirección #}
+            <tr>
+              <th width="150" class="text-end">Dirección:</th>
+              <td>{{ user.direccion is empty ? "-" : user.direccion }}</td>
+            </tr>
+            {# Ubicación #}
+            <tr>
+              <th width="150" class="text-end">Ubicación:</th>
+              <td class="align-middle">{{ user.ubicacion ? user.ubicacion.nomenclatura : '-' }}</td>
+            </tr> 
+            {# Roles #}                        
+            <tr>
+              <th width="150" class="text-end">Rol:</th>
+                {% if is_granted('ROLES_VER') %}
+                  {% if user.roles %}
+                    <td>
+                      {% if role.getRoleName == "ROLE_SUPERUSER" and not user.isSuperAdmin %}
+                        {{ role.getRoleName }}
+                      {% else %}
+                        <a href="{{ path('show_role',{"id": role.id}) }}" class="link-info" style="text-decoration: none;">
+                          {{ role.getRoleName }}
+                        </a>
+                      {% endif %}
+                    </td>
+                  {% else %}
+                    <td>Sin roles asignados</td>
+                  {% endif %}
+                {% else %}
+                  <td>{{ role.getRoleName }}</td>
+                {% endif %}
+            </tr>
+          {# Fecha de Creación #}
+          <tr>
+            <th width="150" class="text-end">Fecha de creación:</th>
+            <td class="align-middle">{{ user.createdAt|date("d/m/Y H:i:s", "America/Argentina/La_Rioja") }}</td>
+          </tr>
+          {# Fecha de Actualización #}
+          <tr>
+            <th width="150" class="text-end">Fecha de actualización:</th>
+            <td class="align-middle">{{ user.updatedAt is empty ? "-" : user.updatedAt|date("d/m/Y H:i:s", "America/Argentina/La_Rioja") }}</td>
+          </tr>   
+        </tbody>
+      </table>
+
+      {% if is_granted('USERS_PASSWORD') %}
+        <a class="btn btn-sm btn-warning float-end text-dark ms-2" href="{{ path('change_user_passwd', {"id":user.id}) }}">
+          <i class="fas fa-sync"></i> &nbsp; Cambiar contraseña
+        </a>
+      {% endif %}
+      {% if is_granted('USERS_ACTIVAR') and (user.username != app.user.username) %}
+        <a class="btn btn-sm btn-danger float-end" href="{{ path('app_admin_changevalidite_user', {"id":user.id}) }}">
+          <i class="fas fa-exclamation-circle"></i> &nbsp; {% if user.suspended %}Quitar suspensión{% else %}Suspender{% endif %}
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock rowMain %}

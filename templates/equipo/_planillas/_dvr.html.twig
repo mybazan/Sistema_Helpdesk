@@ -1,0 +1,60 @@
+{# CAMPOS PARA TABLA DE "DVR" #}
+
+{# ALMACENAMIENTO #}
+{{ include('equipo/_planillas/_bloque_almacenamiento.html.twig', {'equipo': equipo}) }}
+
+{# CANALES #}
+<tr>
+	<th width="250" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Cantidad de Canales:
+	</th>
+	<td>{{ equipo.planillaEquipo.canales|default('-') }}</td>
+</tr>
+
+{# CANALES LIBRES #}
+<tr>
+	<th width="250" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Canales Libres:
+	</th>
+	<td>{{ equipo.planillaEquipo.canalesLibres|default('-') }}</td>
+</tr>
+
+{# RESOLUCIÓN DE GRABACION #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Resolución de Grabación:
+	</th>
+	<td>{{ equipo.planillaEquipo.resolucionGrabacion|default('-') }}</td>
+</tr>
+
+{# TIEMPO APROXIMADO DE GRABACIÓN #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Tiempo Estimado de Grabación:
+	</th>
+	<td>{{ equipo.planillaEquipo.tiempoEstimadoGrabacion|default('-') }}</td>
+</tr>
+
+{# UPS / ESTABILIZADOR #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		UPS/Estabilizador:
+	</th>
+	<td>{{ equipo.planillaEquipo.ups|default('-') }}</td>
+</tr>
+
+{# RED #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Red:
+	</th>
+	<td>{{ equipo.planillaEquipo.red|default('-')}}</td>
+</tr>
+
+{# OBSERVACIÓN #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Observación:
+	</th>
+	<td>{{ equipo.planillaEquipo.observacion|default('-') }}</td>
+</tr>

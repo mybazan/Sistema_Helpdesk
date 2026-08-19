@@ -1,0 +1,30 @@
+{% extends "base/index.html.twig" %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Cambiar contraseña</b></h1>
+        <div class="align-items-center justify-content-end">
+          <a href="{{ path('inicio_index') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver
+          </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+
+  <div class="col">
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(passwordForm) }}
+            {{ form_widget(passwordForm) }}
+            <div class="mt-2">
+              <a class="btn btn-secondary" href="{{ path('inicio_index') }}">Cancelar</a>
+              <button type="submit" name="valider" class="btn btn-primary">Guardar</button>
+            </div>
+            {{ form_end(passwordForm) }}
+        </div>
+    </div>    
+  </div>
+
+{% endblock rowMain %}

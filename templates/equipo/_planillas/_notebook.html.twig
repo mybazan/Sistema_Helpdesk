@@ -1,0 +1,50 @@
+{# CAMPOS PARA TABLA DE "NOTEBOOK" #}
+
+{# PROCESADOR #}
+	<tr>
+		<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> Procesador:
+	</th>
+	<td>{{ equipo.planillaEquipo.procesador|default('-') }}</td>
+</tr>
+
+{# ALMACENAMIENTO #}
+{{ include('equipo/_planillas/_bloque_almacenamiento.html.twig', {'equipo': equipo}) }}
+
+{# MEMORIA RAM #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Memoria RAM:
+	</th>
+	<td>{{ equipo.planillaEquipo.memoriaRAM|default('-')~' GB' }}</td>
+</tr>
+
+{# FUENTE #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Fuente:
+	</th>
+	<td>{{ equipo.planillaEquipo.fuente|default('-') }}</td>
+</tr>
+{# UPS / ESTABILIZADOR #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		UPS/Estabilizador:
+	</th>
+	<td>{{ equipo.planillaEquipo.ups|default('-') }}</td>
+</tr>
+
+{# RED #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Red:
+	</th>
+	<td>{{ equipo.planillaEquipo.red|default('-') }}</td>
+</tr>
+
+{# OBSERVACIÓN #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Observación:
+	</th>
+	<td>{{ equipo.planillaEquipo.observacion|default('-') }}</td>
+</tr>

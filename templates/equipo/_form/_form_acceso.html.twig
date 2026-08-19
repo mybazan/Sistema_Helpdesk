@@ -1,0 +1,108 @@
+{# Prototipo de acceso #}
+{% set accesoPrototype %}
+    <div class="acceso-form card mb-3 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    {{ form_label(form.accesos.vars.prototype.aplicacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                    {{ form_widget(form.accesos.vars.prototype.aplicacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_label(form.accesos.vars.prototype.usuario) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                    {{ form_widget(form.accesos.vars.prototype.usuario) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_label(form.accesos.vars.prototype.clave) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                    {{ form_widget(form.accesos.vars.prototype.clave) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                </div>
+                <div class="col-3">
+                    {{ form_label(form.accesos.vars.prototype.observacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                    {{ form_widget(form.accesos.vars.prototype.observacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                </div>
+                <div class="col-12 text-end mt-3">
+                    <button type="button" class="btn btn-danger btn-sm remove-acceso">
+                        <i class="fa fa-trash me-1"></i> Eliminar Acceso
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endset %}
+
+{# Contenedor principal #}
+<label class="form-label fw-bold">Accesos</label>
+<div id="accesos-container" data-prototype="{{ accesoPrototype|e('html_attr') }}">
+    {% for accesoForm in form.accesos %}
+        <div class="acceso-form card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        {{ form_label(accesoForm.aplicacion) }}
+                        {{ form_widget(accesoForm.aplicacion) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(accesoForm.usuario) }}
+                        {{ form_widget(accesoForm.usuario) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(accesoForm.clave) }}
+                        {{ form_widget(accesoForm.clave) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(accesoForm.observacion) }}
+                        {{ form_widget(accesoForm.observacion) }}
+                    </div>
+                    <div class="col-12 text-end mt-3">
+                        <button type="button" class="btn btn-danger btn-sm remove-acceso">
+                            <i class="fa fa-trash me-1"></i> Eliminar Acceso
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<button type="button" id="add-acceso" class="btn btn-primary btn-sm mb-2">
+    <i class="fa fa-plus me-1"></i> Agregar Acceso
+</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('accesos-container');
+        const addButton = document.getElementById('add-acceso');
+
+        function updateIndexes() {
+            container.querySelectorAll('.acceso-form').forEach((form, index) => {
+                form.querySelectorAll('[name*="[accesos]"]').forEach(input => {
+                    input.name = input.name.replace(/accesos\]\[\d+\]/, `accesos][${index}]`);
+                    input.id = input.id.replace(/accesos_\d+_/, `accesos_${index}_`);
+                });
+            });
+        }
+
+        addButton.addEventListener('click', () => {
+            const prototype = container.dataset.prototype;
+            const index = container.querySelectorAll('.acceso-form').length;
+            const formHTML = prototype.replace(/__acceso_prot__/g, index);
+
+            const div = document.createElement('div');
+            div.innerHTML = formHTML;
+            container.appendChild(div);
+
+            div.querySelector('.remove-acceso').addEventListener('click', () => {
+                div.remove();
+                updateIndexes();
+            });
+
+            updateIndexes();
+        });
+
+        container.querySelectorAll('.remove-acceso').forEach(button => {
+            button.addEventListener('click', function () {
+                this.closest('.acceso-form').remove();
+                updateIndexes();
+            });
+        });
+    });
+</script>

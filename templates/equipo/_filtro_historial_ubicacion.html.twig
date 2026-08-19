@@ -1,0 +1,36 @@
+{% if formFiltroUbicacion is defined and formFiltroUbicacion|length > 0 %}
+
+	{% set hasData = false %}
+
+	{% for key, value in formFiltroUbicacion.vars.data %}
+		{% if value is not null and value != '' %}
+			{% set hasData = true %}
+		{% endif %}
+	{% endfor %}
+
+	<div class="card shadow mb-4 busqueda-avanzada {{ formFiltroUbicacion.vars.submitted and hasData ? 'border border-primary' : '' }}">
+		<a href="#collapseSearchUbicacion" class="d-block card-header py-3 collapsed" data-bs-toggle="collapse" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseSearchUbicacion">
+			<h6 class="m-0 font-weight-bold text-dark">
+				{% if formFiltroUbicacion.vars.submitted and hasData %}
+					<i class="fas fa-search-plus me-3"></i>
+					<b>Búsqueda Aplicada</b>
+				{% else %}
+					<i class="fa fa-search me-3"></i>Buscar
+				{% endif %}
+			</h6>
+		</a>
+		<div class="collapse" id="collapseSearchUbicacion">
+			<div class="card-body">
+				{{ form_start(formFiltroUbicacion, {attr: {"novalidate":"novalidate"}}) }}
+				{{ form_widget(formFiltroUbicacion) }}
+				<div class="row mt-2">
+					<div class="col">
+						<button class="float-end btn btn-sm btn-primary" style="margin-left:15px;">Buscar</button>
+						<a class="btn btn-sm float-end btn-light" href="{{ path('equipo_historial_index', {'id': equipo.id}) }}">Quitar Filtros</a>
+					</div>
+				</div>
+				{{ form_end(formFiltroUbicacion) }}
+			</div>
+		</div>
+	</div>
+{% endif %}

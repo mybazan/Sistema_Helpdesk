@@ -1,0 +1,22 @@
+<div class="modal fade" id="modalSubirAdjunto" tabindex="-1" aria-labelledby="modalSubirAdjuntoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ path('ticket_edit_solucion_adjunto', {'id': pedido.id}) }}" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalSubirAdjuntoLabel">Ticket Nº {{ pedido.id }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Adjuntar solución (Formato PDF)</label>
+            <input class="form-control" id="formFile" name="inputAdjuntarSolucion" type="file" name="pdf" accept=".pdf" max="20971520" required/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i class="fas fa-times me-2"></i>Cancelar</button>
+          <button type="submit" class="btn btn-primary"> <i class="fas fa-file-upload me-2"></i>Subir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

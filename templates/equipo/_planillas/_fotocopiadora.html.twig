@@ -1,0 +1,40 @@
+{# CAMPOS PARA TABLA DE "FOTOCOPIADORA" #}
+{# TONER #}
+<tr>
+    <th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+        Toner:
+    </th>
+    <td>{{ equipo.planillaEquipo.toner|default('-') }}</td>
+</tr>
+
+{# DRUM #}
+<tr>
+    <th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+        DRUM:
+    </th>
+    <td>{{ equipo.planillaEquipo.drum|default('-') }}</td>
+</tr>
+
+{# UPS / ESTABILIZADOR #}
+<tr>
+    <th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+        UPS/Estabilizador:
+    </th>
+    <td>{{ equipo.planillaEquipo.ups|default('-') }}</td>
+</tr>
+
+{# RED #}
+<tr>
+    <th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+        Red:
+    </th>
+    <td>{{ equipo.planillaEquipo.red|default('-') }}</td>
+</tr>
+
+{# OBSERVACIÓN #}
+<tr>
+    <th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+        Observación:
+    </th>
+    <td>{{ equipo.planillaEquipo.observacion|default('-') }}</td>
+</tr>

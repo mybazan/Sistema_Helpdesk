@@ -1,0 +1,136 @@
+<div class="modal fade" id="modalAction{{equipo.id}}" aria-hidden="true" aria-labelledby="modalActionLabel" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="modalActionLabel">
+					Acciones sobre <b>{{ equipo.nombre }}</b>
+				</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>¿Qué acción desea realizar sobre el elemento '<b>{{ equipo.nombre }}</b>'?</p>
+			</div>
+			<div class="modal-footer justify-content-md-center">
+				<div class="d-flex flex-wrap justify-content-center gap-1">
+					{% if is_granted('EQUIPO_VER') %}
+						<button class="btn btn-primary" onclick="window.location='{{ path('show_equipo', {'id': equipo.id}) }}'">
+							<i class="fas fa-eye me-2"></i>Ver
+						</button>
+					{% endif %}
+
+					{% if is_granted('EQUIPO_EDITAR') %}
+						<button class="btn btn-primary" onclick="window.location='{{ path('edit_equipo', {'id': equipo.id}) }}'">
+							<i class="fas fa-pen me-2"></i>Editar
+						</button>
+					{% endif %}
+
+					{% if is_granted('EQUIPO_ELIMINAR') %}
+						<button class="btn btn-primary" data-bs-target="#modalActionDelete{{ equipo.id }}" data-bs-toggle="modal">
+							<i class="fa fa-trash me-2"></i>Eliminar
+						</button>
+					{% endif %}
+
+					{% if is_granted('EQUIPO_EDITAR') %}
+						<button class="btn btn-primary" data-bs-target="#modalCondicion{{equipo.id}}" data-bs-toggle="modal">
+							<i class="fa fa-edit me-2"></i>Cambiar Estado
+						</button>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{# MODAL ELIMINAR #}
+{% if is_granted('EQUIPO_ELIMINAR') %}
+	<div class="modal fade" id="modalActionDelete{{equipo.id}}" aria-hidden="true" aria-labelledby="modalActionDeleteLabel" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="modalActionDeleteLabel">Eliminar '<b>{{ equipo.nombre }}</b>'</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>
+						Está por eliminar el registro <b>{{ equipo.nombre }}</b>.
+						<br><br>
+						<i class="fas fa-info-circle me-2 text-primary"></i>
+						Esta acción no podrá realizarse si el mismo es utilizado en otro registro. Para ese caso utilizar la función desactivar.
+					</p>
+				</div>
+				<div class="modal-footer">
+					<form class="spaceEven w-100" method="post" action="{{ path('delete_equipo', {'id': equipo.id}) }}">
+						<input type="hidden" name="_method" value="DELETE">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipo.id) }}">
+						<button class="btn btn-danger" type="submit">
+							<i class="fas fa-trash me-2"></i>Continuar
+						</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							<i class="fas fa-redo me-2"></i>Cancelar
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+{# CAMBIAR CONDICION #}
+{% if is_granted('EQUIPO_EDITAR') %}
+	<div class="modal fade" id="modalCondicion{{ equipo.id }}" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Cambiar Condición de
+						<b>{{ equipo.nombre }}</b></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form method="post" action="{{ path('equipo_cambiar_condicion', {'id': equipo.id}) }}">
+					<div class="modal-body">
+						<div class="form-group">
+							<label>
+								<b>Condición Actual:</b>
+								{% if equipo.condicion %}
+									{% if equipo.condicion == 1 %}
+										Activo
+										<i class="fas fa-check-circle text-success mb-2" title="Activo"></i>
+									{% elseif equipo.condicion == 2 %}
+										Prestado
+										<i class="fas fa-hand-holding text-warning mb-2" title="Prestado"></i>
+									{% elseif equipo.condicion == 3 %}
+										Fuera de Servicio
+										<i class="fas fa-exclamation-circle text-danger mb-2" title="Fuera de Servicio"></i>
+									{% endif %}
+								{% else %}
+									Sin Condición
+									<i class="fas fa-minus text-dark mb-2" title="Fuera de Servicio"></i>
+								{% endif %}
+							</label>
+							<br>
+							<select id="condicion_{{ equipo.id }}" name="condicion" class="form-control" required>
+								{% if equipo.condicion == 1 %}
+									<option value="2" {% if equipo.condicion == 2 %} selected {% endif %}>Prestado</option>
+									<option value="3" {% if equipo.condicion == 3 %} selected {% endif %}>Fuera de Servicio</option>
+								{% elseif equipo.condicion == 3 %}
+									<option value="1" {% if equipo.condicion == 1 %} selected {% endif %}>Activo</option>
+									<option value="2" {% if equipo.condicion == 2 %} selected {% endif %}>Prestado</option>
+								{% elseif equipo.condicion == 2 %}
+									<option value="1" {% if equipo.condicion == 1 %} selected {% endif %}>Activo</option>
+									<option value="3" {% if equipo.condicion == 3 %} selected {% endif %}>Fuera de Servicio</option>
+								{% else %}
+									<option value="1" {% if equipo.condicion == 1 %} selected {% endif %}>Activo</option>
+									<option value="2" {% if equipo.condicion == 2 %} selected {% endif %}>Prestado</option>
+									<option value="3" {% if equipo.condicion == 3 %} selected {% endif %}>Fuera de Servicio</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endif %}

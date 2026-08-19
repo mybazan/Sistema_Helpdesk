@@ -1,0 +1,55 @@
+backend:
+  global:
+    welcome: Bienvenido
+    you_are_logged: Estás logeado como
+    leave_impersonate: Dejando la suplantación
+    change_my_password: Cambiar contraseña
+    logout: Salir
+    error: Error
+    success: Exitoso
+    an_unexpected_error: Un error inesperado ocurrió
+    must_not_be_empty: No puede estar vacío
+    please_confirm: Por favor, confirme su acción
+    choice_action: Selecciona una acción
+    no_item_selected: Sin items selecionados
+  menu:
+    home: Home
+    user: User
+    manage: Administrar
+    categories: Categorías
+    blog: Blog
+    history: Historial
+  role:
+    choice_role: Elija un rol
+  user:
+    listing: Escuchando
+    user_listing: Lista de usuarios
+    group_actions: Grupo de acción
+    deactivate: Desactivado
+    Activate: Activado
+    delete: Eliminar
+    username: Username
+    email: Email
+    name: Nombre
+    modifier: Editar
+    status: Estado
+    password: Contraseña
+    cancel: Cancelar
+    register: Registrar
+    changer_password: Cambiar contraseña
+    changer_my_password: Cambiar contraseña
+    current_password: Contraseña actual
+    new_password: Nueva contraseña
+    confirm_password: Confirmar contraseña
+    remember_password: Recordar contraseña
+    new_passwod_must_be: Las contraseñas deben ser idénticas
+    changed_password: Contraseña cambiada
+    add_user: Añadir usuario
+    modify_user: Modificar usuario
+  login:
+    new_site: Nuevo en el sitio?
+    create_acount: Crear cuenta
+    all_rights: Todos los derechos reservados
+    already_member: Ya tienes usuario?
+    log_in: Entrar
+

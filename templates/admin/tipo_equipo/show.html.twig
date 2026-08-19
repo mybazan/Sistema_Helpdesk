@@ -1,0 +1,54 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Tipo de Equipos{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Tipo de Equipo ID: {{ tipo.id }}</b></h1>
+        <div class="align-items-center justify-content-end">
+          {% if is_granted('TIPO_EQUIPO_EDITAR') %}
+            <a href="{{ path('tipo_equipo_edit', {"id":tipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+              <i class="fa fa-edit"></i> &nbsp; Editar
+            </a>
+          {% endif %}
+          <a href="{{ path('tipo_equipo_index') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver al listado
+          </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+
+  <div class="col">
+    <div class="table-responsive mt-3 pb-3">
+      <table class="table">
+        <tbody>
+          {# NOMENCLATURA #}
+          <tr>
+            <th width="150" class="text-end">Nomenclatura:</th>
+            <td class="align-middle">{{ tipo.nomenclatura }}</td>
+          </tr>
+          {# TIPO EQUIPO #}
+          <tr>
+            <th width="150" class="text-end">Nombre:</th>
+            <td class="align-middle">{{ tipo.nombre }}</td>
+          </tr>
+          {# ESTADO #}
+          <tr>
+            <th width="150" class="text-end">Estado:</th>
+            <td class="align-middle">
+                {{ tipo.estadoLabel }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info mt-3" role="alert">
+      Las especificaciones técnicas de cada equipo (procesador, memoria, marca, etc.) se cargan desde la
+      <strong>Planilla del Equipo</strong> en la ficha del equipo, no desde el tipo.
+    </div>
+  </div>
+
+{% endblock rowMain %}

@@ -1,0 +1,206 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Gestión de Ticket{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-dark"><b>Lista de Tickets de Soporte</b></h1>
+
+        {% if is_granted('TICKET_CREAR') %}
+            <div class="align-items-center justify-content-end">
+                <a href="{{ path('ticket_new') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fa fa-plus"></i> &nbsp; Nuevo Ticket
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+
+        {{ include('pedido/_filtro.html.twig', {'form': formFiltros}) }}
+
+        <div class="table-responsive mt-3">
+            <table class="display table table-hover" >
+                {# Títulos de tabla #}
+                <thead>
+                    {# Nº DE TICKET #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div>
+                            {{ knp_pagination_sortable(pagination, 'Ticket', 'p.id') }}  &nbsp;
+                            {% if pagination.getSort == 'p.id' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'p.id' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# FECHA #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Fecha', 'p.fecha') }}  &nbsp;
+                            {% if pagination.getSort == 'p.fecha' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'p.fecha' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# SOLICITANTE #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Solicitante', 'p.solicitanteTexto') }}  &nbsp;
+                            {% if pagination.getSort == 'p.solicitanteTexto' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'p.solicitanteTexto' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# SOLICITUD #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Solicitud', 'p.solicitud') }}  &nbsp;
+                            {% if pagination.getSort == 'p.solicitud' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'p.solicitud' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# ENCARGADO #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Encargado', 't.apellido') }}  &nbsp;
+                            {% if pagination.getSort == 't.apellido' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 't.apellido' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# ESTADO ACTUAL #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Estado', 'pe.nombre') }}  &nbsp;
+                            {% if pagination.getSort == 'pe.nombre' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'pe.nombre' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# PRIORIDAD #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            {{ knp_pagination_sortable(pagination, 'Prioridad', 'p.prioridad') }}  &nbsp;
+                            {% if pagination.getSort == 'p.prioridad' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'p.prioridad' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                </thead>
+                {# END Títulos de tabla #}
+
+                {# Contenido de tabla #}
+                <tbody>
+                     {% for pedido in pagination %}
+                        <tr 
+                            {% if is_granted('TICKET_EDITAR') or is_granted('TICKET_ELIMINAR') or is_granted('TICKET_ASIGNAR') %}
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalAction{{pedido.id}}"
+                                class="td-cursor cursorPointer"
+                            {% endif %}
+                        >
+                            <td class="align-middle">{{ pedido.id }}</td>
+                            <td class="align-middle text-center">{{ pedido.fecha|date("d/m/Y") }}</td>
+                            <td class="align-middle text-center">{{ pedido.solicitanteDisplay }}</td>
+                            <td class="align-middle text-center">{{ pedido.solicitud }}</td>
+                            <td class="align-middle text-center">{{ pedido.tecnicoAsignado ? pedido.tecnicoAsignado : '-' }}</td>
+                            <td class="align-middle text-center
+                                {% if pedido.estadoActualNombre == 'Resuelto' %}
+                                    text-warning fw-bold
+                                {% elseif pedido.estadoActualNombre == 'Demorado' %}
+                                    text-danger fw-bold
+                                {% elseif pedido.estadoActualNombre == 'Desestimado' %}
+                                    text-info fw-bold
+                                {% elseif pedido.estadoActualNombre == 'Finalizado' %}
+                                    text-success fw-bold
+                                {% elseif pedido.estadoActualNombre == 'Asignado' %}
+                                    text-primary fw-bold
+                                {% elseif pedido.estadoActualNombre == 'Pendiente' %}
+                                    text-secondary fw-bold
+                                {% elseif pedido.estadoActualNombre == 'En Proceso' %}
+                                    text-primary fw-bold
+                                {% else %}
+                                    fw-bold
+                                {% endif %}
+                            ">
+                            {{ pedido.estadoActualNombre }}
+                            </td>
+                            <td class="align-middle text-center"
+                            {% if pedido.prioridad == 1 %}
+                                title="Prioridad Alta">
+                                    <i class="fas fa-angle-right text-danger"></i>
+                                    <i class="fas fa-angle-right text-danger"></i>
+                                    <i class="fas fa-angle-right text-danger"></i>
+                            {% elseif pedido.prioridad == 2 %}
+                                title="Prioridad Media">
+                                    <i class="fas fa-angle-right text-warning"></i>
+                                    <i class="fas fa-angle-right text-warning"></i>
+                            {% elseif pedido.prioridad == 3 %}
+                                title="Prioridad Baja">
+                                <i class="fas fa-angle-right text-success"></i>
+                            {% else %}
+                                title="Sin definir">
+                                <i class="fas fa-question text-danger"></i>
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {# END Contenido de tabla #}
+
+            </table>
+        </div>
+
+        {# Paginación #}
+        <div class="row justify-content-between m-0 w-100 mt-2">
+            <div class="col-4">
+                <div class="d-flex mb-2 mb-md-0 d-inline-flex">
+                    {{ pagination.getTotalItemCount }} {{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }} en total
+                </div>
+            </div>
+            <div class="col-4 text-end">
+                <div class="d-inline-flex align-items-end">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+        {# END Paginación #}
+
+    </div>
+{% endblock %}
+
+{% block modal_content %}
+    {% for pedido in pagination %}
+        {{ include('pedido/_modal_action_form.html.twig', { 'pedido': pedido, 'usuario': usuario, 'tecnicos': tecnicos } ) }}
+    {% endfor %}
+{% endblock modal_content %}

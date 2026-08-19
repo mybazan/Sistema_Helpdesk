@@ -1,0 +1,144 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Equipos{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between">
+        <h1 class="h3 mb-0 text-dark"><b>Vincular Equipo</b></h1>
+        
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+        {% if id is defined%}
+            {% if is_granted('EQUIPO_CREAR') %}
+                <a href="{{ path('new_equipo', {'id': id }) }}" class="btn btn-sm btn-primary shadow-sm me-2">
+                    <i class="fa fa-plus"></i> &nbsp; Nuevo Equipo
+                </a>
+            {% endif %}
+            <a href="{{ path('show_equipo', {'id': id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fa fa-reply"></i> &nbsp; Volver al Equipo
+            </a>
+        {% endif %}   
+        {% if personal is defined%}
+            {% if is_granted('PERSONAL_CREAR') %}
+                <a href="{{ path('new_equipo', {'id': personal }) }}" class="btn btn-sm btn-primary shadow-sm me-2">
+                    <i class="fa fa-plus"></i> &nbsp; Nuevo Equipo
+                </a>
+            {% endif %}
+            <a href="{{ path('personal_show', {'id': personal}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fa fa-reply"></i> &nbsp; Volver al Personal
+            </a>
+        {% endif %}  
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+
+        {{ include('equipo/_filtro.html.twig', {'form': formFiltro}) }}
+        <div class="table-responsive mt-3">
+            <table class="display table table-hover" >
+                {# Títulos de tabla #}
+                <thead>
+                    {#  #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="text-center">
+                            #
+                        </div>
+                    </th>
+                    {# TIPO EQUIPO #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+                        Tipo 
+                    </th>
+                    {# NOMBRE #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        Nombre
+                    </th>
+                    {# MAC #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        Mac
+                    </th>
+                    {# DIRECCION IP #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        Dirección Ip
+                    </th>
+                    {# REPARTICION #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        Repartición
+                    </th>
+                </thead>
+                {# END Títulos de tabla #}
+
+                {# Contenido de tabla #}
+                <tbody>
+                    {% for equipo in pagination %}
+                        <tr>
+
+                            <td class="align-middle text-center td-cursor cursorPointer">
+                                <button class="btn btn-sm btn-primary" data-bs-target="#modalActionAgregar{{equipo.id}}" data-bs-toggle="modal">Agregar</button>
+                            </td>
+                            <td class="align-middle td-cursor cursorPointer">{{ equipo.tipo.nombre }}</td>
+                            <td class="align-middle td-cursor cursorPointer">{{ equipo.nombre }}</td>
+                            <td class="align-middle td-cursor cursorPointer">{{ equipo.mac }}</td>
+                            <td class="align-middle td-cursor cursorPointer">{{ equipo.ip }}</td>
+                            <td class="align-middle td-cursor cursorPointer">{{ equipo.ubicacion ? equipo.ubicacion.nomenclatura : '-' }}</td>
+                        </tr>
+                    {% endfor %}
+                    
+                </tbody>
+
+                {# END Contenido de tabla #}
+            </table>
+        </div>
+        
+        {# Paginación #}
+        <div class="row justify-content-between m-0 w-100 mt-2">
+            <div class="col-4">
+                <div class="d-flex mb-2 mb-md-0 d-inline-flex">
+                    {{ pagination.getTotalItemCount }} {{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }} en total
+                </div>
+            </div>
+            <div class="col-4 text-end">
+                <div class="d-inline-flex align-items-end">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+        {# END Paginación #}
+
+    </div>
+{% endblock %}
+
+{% block modal_content %}
+    {% for equipo in pagination %}
+        {# MODAL VINCULAR EQUIPO #}
+        {% if is_granted('EQUIPO_CREAR') %}
+        <div class="modal fade" id="modalActionAgregar{{ equipo.id }}" aria-hidden="true" aria-labelledby="modalActionVincularLabel" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalActionAgregarLabel">Vincular equipo</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Está por vincular el equipo <b>{{ equipo.nombre }}</b>.<br></p>
+                    
+                </div>
+                <div class="modal-footer">
+                    {% if id is defined %}
+                    <button class="btn btn-primary" type="submit" onClick="window.location='{{ path('vincular_equipo', {'id': id, 'idE':equipo.id}) }}'">Confirmar</button>
+                    {% endif %}
+                    {% if personal is defined %}
+                    <button class="btn btn-primary" type="submit" onClick="window.location='{{ path('agregar_equipo_personal', {'id': personal, 'idE':equipo.id}) }}'">Confirmar</button>
+                    {% endif %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-redo"></i>&nbsp
+                        Cancelar
+                        </button>  
+                </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    {% endfor %}
+{% endblock modal_content %}

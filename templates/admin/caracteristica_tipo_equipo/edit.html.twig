@@ -1,0 +1,12 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Características (deshabilitado){% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+        <div class="alert alert-info" role="alert">
+            Este módulo quedó deshabilitado. Use la Planilla del Equipo.
+        </div>
+        <a href="{{ path('tipo_equipo_index') }}" class="btn btn-sm btn-primary">Volver</a>
+    </div>
+{% endblock %}

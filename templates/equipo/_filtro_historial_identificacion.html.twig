@@ -1,0 +1,36 @@
+{% if formFiltroIpHost is defined and formFiltroIpHost|length > 0 %}
+
+	{% set hasData = false %}
+
+	{% for key, value in formFiltroIpHost.vars.data %}
+		{% if value is not null and value != '' %}
+			{% set hasData = true %}
+		{% endif %}
+	{% endfor %}
+
+	<div class="card shadow mb-4 busqueda-avanzada {{ formFiltroIpHost.vars.submitted and hasData ? 'border border-primary' : '' }}">
+		<a href="#collapseSearchIpYHost" class="d-block card-header py-3 collapsed" data-bs-toggle="collapse" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseSearchIpYHost">
+			<h6 class="m-0 font-weight-bold text-dark">
+				{% if formFiltroIpHost.vars.submitted and hasData %}
+					<i class="fas fa-search-plus me-3"></i>
+					<b>Búsqueda Aplicada</b>
+				{% else %}
+					<i class="fa fa-search me-3"></i>Buscar
+				{% endif %}
+			</h6>
+		</a>
+		<div class="collapse" id="collapseSearchIpYHost">
+			<div class="card-body">
+				{{ form_start(formFiltroIpHost) }}
+				{{ form_widget(formFiltroIpHost) }}
+				<div class="row mt-2">
+					<div class="col">
+						<button class="float-end btn btn-sm btn-primary" style="margin-left:15px;">Buscar</button>
+						<a class="btn btn-sm float-end btn-light" href="{{ path('equipo_historial_index', {'id': equipo.id}) }}">Quitar Filtros</a>
+					</div>
+				</div>
+				{{ form_end(formFiltroIpHost) }}
+			</div>
+		</div>
+	</div>
+{% endif %}

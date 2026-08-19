@@ -1,0 +1,31 @@
+{# CAMPOS PARA TABLA DE "CAMARA"#}
+{# ALMACENAMIENTO #}
+{{ include('equipo/_planillas/_bloque_almacenamiento.html.twig', {'equipo': equipo}) }}
+
+{# CALIDAD DE GRABACIÓN #}
+	<tr>
+		<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;"> 
+		Megapixeles:
+	</th>
+	<td>{{ equipo.planillaEquipo.megapixeles|default('-') }}</td>
+</tr>
+{# UPS #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		UPS/Estabilizador:
+	</th>
+	<td>{{ equipo.planillaEquipo.ups|default('-') }}</td>
+</tr>
+{# RED #}
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Red:
+	</th>
+	<td>{{ equipo.planillaEquipo.red|default('-')}}</td>
+</tr>
+<tr>
+	<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+		Observación:
+	</th>
+	<td>{{ equipo.planillaEquipo.observacion|default('-') }}</td>
+</tr>

@@ -1,0 +1,39 @@
+{% extends 'base/index-alone.html.twig' %}
+
+{% block title %}Recuperación de contraseña{% endblock %}
+
+{% block contenido %}
+	<div class="container">
+		<div class="row justify-content-center h-100">
+			<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+				<div class="card shadow-lg">
+					<div class="card-footer py-2 pt-3 border-0 text-center">
+						<h1 class="fs-4 text-dark">Sistema de Soporte</h1>
+					</div>
+					<div class="card-body p-5 pb-2 pt-2">
+						<h1 class="fs-5 card-title fw-bold mb-3 mt-2">Recuperar contraseña</h1>
+						{% for message in app.flashes('reset_password_error') %}
+							<div class="alert alert-danger alert-dismissible fade show mt-2">
+								{{ message }}
+							</div>
+						{% endfor %}
+
+						{{ form_start(requestForm) }}
+							<p class="card-text">Complete el formulario y le enviaremos un enlace para recuperar su contraseña.</p>
+							{{ form_row(requestForm.email) }}
+							<button class="btn btn-primary submit inputLoggin w-100 mt-3" id="btnIngresar">Enviar</button>
+						{{ form_end(requestForm) }}
+						<hr>
+						<a href="{{ path('inicio_index') }}" class="btn btn-primary submit inputLoggin w-100" id="btnIngresar">Iniciar Sesión</a>
+					</div>
+
+					<div class="card-footer py-1 border-0">
+						<div class="text-center text-muted">
+							Gestión de tickets e inventario técnico
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

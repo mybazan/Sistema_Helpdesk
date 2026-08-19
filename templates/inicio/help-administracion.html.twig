@@ -1,0 +1,119 @@
+<div class="accordion accordion-flush mt-2" id="accordionFlushOne">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                ¿Cómo accedo a cada apartado?
+            </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushOne">
+            <div class="accordion-body">
+                Para ingresar a cada apartado lo puede realizar desde el <strong>panel lateral
+                izquierdo de accesos rápidos</strong>, accionando la opción
+                <code><i class="fa fa-cog mx-1"></i>Administración</code>, y para el caso que desee:
+                <ul>
+                    <li>
+                        Acceder al apartado de usuarios, deberá escoger la opción
+                        <code><i class="fa fa-user mx-1"></i></i>Usuarios</code>.
+                    </li>
+                    <li>
+                        Acceder al apartado de roles y permisos, deberá escoger la opción
+                        <code><i class="fas fa-key mx-1"></i></i>Roles y Permisos</code>.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if is_granted('USERS_CREAR') %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    ¿Cómo dar de alta a un usuario?
+                </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushOne">
+                <div class="accordion-body">
+                    Para crear un usuario debe acceder al apartado desde los accesos rápidos de
+                    <code><i class="fa fa-home mx-1"></i></i>Inicio</code> en la opción
+                    <code><i class="fas fa-user-plus mx-1"></i></i>AGREGAR USUARIO</code> o, tambien
+                    desde el <strong>panel lateral izquierdo de accesos rápidos</strong>, accionando
+                    la opción<code><i class="fa fa-cog mx-1"></i>Administración</code> y escoger la
+                    opción<code><i class="fa fa-user mx-1"></i></i>Usuarios</code>, luego ingresar a
+                    <code><i class="fa fa-plus mx-1"></i></i>Nuevo</code> para acceder al formulario
+                    de alta de un usuario.<br><br>
+                    Dentro del apartado <strong>Nuevo usuario</strong>, deberá completar como mínimo
+                    todos los campos que están acompados de un asterisco (*) y, para finalizar el
+                    proceso deberá accionar el botón <strong>Guardar</strong>.<br><br>
+                    Si el proceso finalizó correctamente, el sistema mostrará el mensaje
+                    "<strong>Usuario creado correctamente.</strong>" en un recuadro de color verde.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if is_granted('ROLES_CREAR') %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    ¿Cómo dar de alta un rol?
+                </button>
+            </h2>
+            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushOne">
+                <div class="accordion-body">
+                    Para crear un rol debe acceder al apartado desde los accesos rápidos de
+                    <code><i class="fa fa-home mx-1"></i></i>Inicio</code> en la opción
+                    <code><i class="fas fa-key mx-1"></i></i>AGREGAR ROL</code> o, tambien
+                    desde el <strong>panel lateral izquierdo de accesos rápidos</strong>, accionando
+                    la opción<code><i class="fa fa-cog mx-1"></i>Administración</code> y escoger la
+                    opción<code><i class="fas fa-key mx-1"></i></i>Roles y Permisos</code>, luego ingresar a
+                    <code><i class="fa fa-plus mx-1"></i></i>Nuevo</code> para acceder al formulario
+                    de alta de un rol.<br><br>
+                    Dentro del apartado <strong>Nuevo rol</strong>, deberá completar el campo y, para finalizar
+                    el proceso deberá accionar el botón <strong>Guardar</strong>.<br><br>
+                    Si el proceso finalizó correctamente, el sistema mostrará el mensaje
+                    "<strong>Rol creado correctamente.</strong>" en un recuadro de color verde.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if is_granted('ROLES_CREAR') %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+                    ¿Cómo modificar permisos de un rol?
+                </button>
+            </h2>
+            <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushOne">
+                <div class="accordion-body">
+                    Para aplicar permisos a un rol, debe acceder al apartado <strong>Roles y Permisos</strong>
+                    desde el <strong>panel lateral izquierdo de accesos rápidos</strong>, accionando
+                    la opción<code><i class="fa fa-cog mx-1"></i>Administración</code> y escoger la
+                    opción<code><i class="fas fa-key mx-1"></i></i>Roles y Permisos</code>. Luego tendrá que elegir un
+                    registro del listado al cual desea cambiar los permisos.<br><br>
+                    Dentro del detalle de un rol, podrá configurar los distintos accesos (permisos) que tendrá permitido un rol
+                    específico. Al accionar los botones <strong>Permisos Generales</strong> y/o
+                    <strong>Permisos de Administración</strong> podrá visualizar
+                    los tipos de permisos para un apartado.<br><br>
+                    Para cada apartado podrá activar o desactivar los tipos de permisos que desea aplicar para un rol.
+                    Los permisos modificados podrán ser persistidos cuando accione el botón <strong>Guardar</strong>.<br><br>
+                    Si el proceso finalizó correctamente, el sistema mostrará el mensaje
+                    "<strong>Permisos actualizados correctamente.</strong>" en un recuadro de color verde.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingExtra">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-CollapseExtra" aria-expanded="false" aria-controls="flush-collapseExtra">
+                ¿A qué hace referencia el simbolo asterisco (*) en un campo?
+            </button>
+        </h2>
+        <div id="flush-CollapseExtra" class="accordion-collapse collapse" aria-labelledby="flush-headingExtra" data-bs-parent="#accordionFlushOne">
+            <div class="accordion-body">
+                El símbolo asterisco (*) sobre un campo <strong>significa que el mismo es obligatorio</strong>. Esto quiere decir que para finalizar el proceso es necesario que el campo marcado con un asterisco debe estar rellenado con el dato necesario.
+            </div>
+        </div>
+    </div>
+
+</div>

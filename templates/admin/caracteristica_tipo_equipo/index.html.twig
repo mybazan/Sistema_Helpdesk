@@ -1,0 +1,21 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Características (deshabilitado){% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Características de tipo de equipo</b></h1>
+        <a href="{{ path('tipo_equipo_index') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver a tipos de equipo
+        </a>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+        <div class="alert alert-info" role="alert">
+            Este módulo quedó deshabilitado. Las especificaciones técnicas se cargan desde la
+            <strong>Planilla del Equipo</strong> en la ficha de cada equipo.
+        </div>
+    </div>
+{% endblock %}

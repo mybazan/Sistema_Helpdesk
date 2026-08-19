@@ -1,0 +1,258 @@
+<head>
+	<title>
+		{% block title %}Listado de equipos
+		{% endblock %}
+	</title>
+	<meta charset="utf-8">
+	<meta name="pdfviewer" content="width=device-width, initial-scale=0.60, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+</head>
+<style>
+	@page {
+		size: A4;
+		padding: 0;
+		margin: 20 0 0;
+		width: 21cm;
+		height: 29.7cm;
+	}
+	body {
+		padding: 0;
+		margin: 0;
+	}
+	.listado {
+		height: auto;
+		padding: 0;
+		margin: 0.5cm 1cm 1.5cm 2.5cm;
+		font-family: helvetica !important;
+		border: 0 double #050404 !important;
+	}
+	.listado-encabezado-imagen {
+		margin: 0;
+		padding-top: 6;
+		text-align: center;
+	}
+	.listado-encabezado-texto {
+		text-align: center;
+	}
+	.listado-encabezado-texto > h5 {
+		margin: 0 0 2px;
+	}
+	.listado-encabezado-texto > h4 {
+		margin: 15px 0 5px;
+	}
+	hr {
+		margin: 0 30;
+	}
+	.listado-cuerpo {
+		margin: 0.3cm 0.5cm 0;
+		text-align: center;
+	}
+	.listado-cuerpo > h2 {
+		margin-bottom: 25px;
+	}
+	.listado-cuerpo > h3 {
+		margin-top: 300px;
+	}
+	th {
+		padding: 0.2cm;
+	}
+	/* Encabezado de la tabla que se repite en cada página */
+	.table-header {
+		display: table-header-group;
+	}
+	.tabla-fila > td {
+		padding: 0.1cm 0 0.1cm 0.2cm;
+		font-size: 0.8em;
+	}
+	.tabla-fila > td:first-child {
+		width: 5cm;
+		text-align: right;
+	}
+	.tabla-fila {
+		border: 1px solid gray;
+		border-right: none;
+		vertical-align: top;
+	}
+	.listado-cuerpo-operaciones {
+		width: 100%;
+	}
+	.tabla-fila-titulos {
+		text-align: center;
+		padding: 0.1cm 0 0.1cm 0.2cm;
+		font-size: 0.9em;
+		font-weight: bold;
+		background-color: #B4B4B4;
+	}
+	.tabla-fila-contenido {
+		text-align: center;
+		padding: 0.1cm 0 0.1cm 0.2cm;
+		font-size: 0.9em;
+		border-bottom: 1px solid gray;
+		font-size: 0.8em;
+	}
+	.tabla-fila-contenido > td {
+		padding: 0.2cm 0;
+	}
+	.tabla-fila-titulos > td {
+		padding: 0.3cm 0 0.3cm 0.2cm;
+		font-size: 0.9em;
+		border-top: 2 solid black;
+		width: 2.7cm;
+		border-bottom: 2px solid black;
+	}
+</style>
+
+<body>
+	<div class="listado">
+		<div class="listado-encabezado-texto">
+			<h5>SISTEMA DE SOPORTE</h5>
+			<h5>INVENTARIO DE EQUIPOS</h5>
+		</div>
+		<div class="listado-encabezado-imagen">
+			<img src="data:image/png;base64,{{ logo }}" width="50">
+		</div>
+
+		<div class="listado-encabezado-texto">
+			<h4>LISTADO DE EQUIPOS</h4>
+			{% set filtrosTexto = '' %}
+			{% if filtros.id|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>ID</u>: "' ~ filtros.id ~ '"' %}
+			{% endif %}
+			{% if filtros.tipo|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Tipo</u>: ' ~ filtros.tipo.nombre %}
+			{% endif %}
+			{% if filtros.nombre|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Nombre</u>: "' ~ filtros.nombre ~ '"' %}
+			{% endif %}
+			{% if filtros.ubicacion|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Ubicación</u>: ' ~ filtros.ubicacion.nomenclatura %}
+			{% endif %}
+			{% if filtros.mac|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Dirección MAC</u>: "' ~ filtros.mac ~ '"' %}
+			{% endif %}
+			{% if filtros.ip|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Dirección IP</u>: "' ~ filtros.ip ~ '"' %}
+			{% endif %}
+			{% if filtros.memoriaRAM|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Memoria RAM</u>: "' ~ filtros.memoriaRAM ~ '"' %}
+			{% endif %}
+			{% if filtros.tipoAlmacenamiento|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Tipo Almacenamiento</u>: "' ~ filtros.tipoAlmacenamiento ~ '"' %}
+			{% endif %}
+			{% if filtros.capacidadAlmacenamiento|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Capacidad Almacenamiento</u>: "' ~ filtros.capacidadAlmacenamiento ~ '"' %}
+			{% endif %}
+			{% if filtros.rolAlmacenamiento|default('') %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Rol Almacenamiento</u>: "' ~ filtros.rolAlmacenamiento ~ '"' %}
+			{% endif %}
+			{% if filtros.condicion|default('') %}
+				{% set condicionTexto = {
+					1: 'Activos',
+					2: 'Prestados',
+					3: 'Fuera de Servicio',
+					4: 'Sin Condición'
+				}[filtros.condicion] %}
+				{% set filtrosTexto = filtrosTexto ~ '<br>- <u>Condición</u>: ' ~ condicionTexto %}
+			{% endif %}
+
+			{% if filtrosTexto is not empty %}
+				<p style="text-align: justify;">El listado se encuentra filtrado por: {{ filtrosTexto|raw }}</p>
+			{% else %}
+				<br>
+			{% endif %}
+
+
+		</div>
+		<div class="listado-cuerpo-operaciones">
+			<table style="border-collapse: collapse; border: 2px solid black; width: 100%;">
+				<thead class="table-header">
+					<tr class="tabla-fila-titulos">
+						{# ID #}
+						<td style="width: 0.50cm;">ID</td>
+
+						{# TIPO #}
+						{% if not filtros.tipo|default('') %}
+							<td style="width: auto;">TIPO</td>
+						{% endif %}
+						
+						{# NOMBRE #}
+						<td style="width: auto;">NOMBRE</td>
+						
+						{# UBICACIÓN #}
+						{% if not filtros.ubicacion|default('') %}
+							<td style="width: auto;">UBICACIÓN</td>
+						{% endif %}
+
+						{# MAC #}
+						<td style="width: auto;">MAC</td>
+
+						{# IP #}
+						<td style="width: auto;">IP</td>
+
+						{# CONDICIÓN #}
+						{% if not filtros.condicion|default('') %}
+							<td style="width: auto;">CONDICIÓN</td>
+						{% endif %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for equipo in equipos %}
+						<tr class="tabla-fila-contenido">
+							{# ID #}
+							<td class="text-center">{{ equipo.id }}</td>
+
+							{# Tipo #}
+							{% if not filtros.tipo|default('') %}
+								<td class="text-center">{{ equipo.tipo.nombre }}</td>
+							{% endif %}
+
+							{# Nombre #}
+							<td class="text-center">{{ equipo.nombre }}</td>
+
+							{# Oficina #}
+							{% if not filtros.ubicacion|default('') %}
+								<td class="text-center">{{ equipo.ubicacion ? equipo.ubicacion.nomenclatura : '-' }}</td>
+							{% endif %}
+
+							{# MAC #}
+							<td class="text-center">{{ equipo.mac|default('-')  }}</td>
+
+							{# IP #}
+							<td class="text-center">{{ equipo.ip|default('-') }}</td>
+							{% if not filtros.condicion|default('') %}
+								<td class="text-center">
+									{% if equipo.condicion == 1 %}
+										Activo
+									{% elseif equipo.condicion == 2 %}
+										Prestado
+									{% elseif equipo.condicion == 3 %}
+										Fuera de Servicio
+									{% else %}
+										Sin Condición
+									{% endif %}
+								</td>
+							{% endif %}
+						</tr>
+					{% else %}
+						{% set colspan = 7 
+							- (filtros.tipo|default('') ? 1 : 0) 
+							- (filtros.ubicacion|default('') ? 1 : 0) 
+							- (filtros.condicion|default('') ? 1 : 0) 
+						%}
+
+						<tr class="tabla-fila-contenido">
+							<td colspan="{{ colspan }}">- NO REGISTRA EQUIPOS -</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<h5>
+				{% if equipos|length > 1 %}
+					{{ equipos|length ~ ' registros en total' }}
+				{% elseif equipos|length == 1 %}
+					{{ equipos|length ~ ' registro en total ' }}
+				{% endif %}
+			</h5>
+		</div>
+	</div>
+</body>

@@ -1,0 +1,209 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Ticket Nº {{ pedido.id }}{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between">
+        <h1 class="h3 mb-0 text-dark"><b> Ticket de Soporte Nº{{ pedido.id }}</b></h1>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+      <div class="align-items-center justify-content-end">
+        {% if is_granted('TICKET_EDITAR') and (is_granted('TICKET_ASIGNAR') or not usuario.isTecnico) and pedido.estadoActualNombre != 'Finalizado' %}
+            <button class="btn btn-sm btn-primary shadow-sm" onClick="window.location='{{ path('ticket_edit', {'id': pedido.id}) }}'"><i class="fas fa-pen me-2"></i>
+              Editar
+            </button>
+        {% endif %}
+
+        {% if is_granted('TICKET_VER') %}
+          {% if pedido.solucion %}
+            <a href="{{ path('pdf_generator', { 'idPedido': pedido.id }) }}" target="_blank" class="btn btn-sm btn-primary shadow-sm">
+              <i class="fa fa-print"></i> &nbsp; Resolución Ticket
+            </a>
+          {% endif %}
+         	<a href="{{ referrer is not empty ? referrer : path('ticket_index', { 'page': page }) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i>
+            &nbsp; Volver al listado
+          </a>
+        {% endif %}
+      </div>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+
+  {% for estado in pedido.pedidoHistorialEstados %}
+    {% if loop.last and estado.pedidoEstado.nombre == 'Desestimado' %}
+      <div class="alert alert-danger" role="alert">
+        <i class="fas fa-info-circle text-danger me-2"></i>
+        Actualmente el ticket se encuentra <b>desestimado</b>.
+      </div>
+    {% elseif loop.last and estado.pedidoEstado.nombre == 'Demorado' %}
+      <div class="alert alert-warning" role="alert">
+        <i class="fas fa-info-circle text-warning me-2"></i>
+        Actualmente el ticket se encuentra <b>demorado</b>.
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="col">
+    <div class="table-responsive mt-3 pb-3">
+      <table class="table table-borderless">
+        <tbody>
+          {# FICHA #}
+          <tr>
+            <th width="180" class="text-end">Ticket Nº:</th>
+            <td class="align-middle">{{ pedido.id }}</td>
+          </tr>
+
+          {# SOLICITANTE #}
+          <tr>
+            <th width="180" class="text-end">Solicitante:</th>
+            <td class="align-middle">{{ pedido.solicitanteDisplay }}</td>
+          </tr>
+
+          {# UBICACIÓN SOLICITANTE #}
+          <tr>
+            <th width="180" class="text-end">Ubicación:</th>
+            <td class="align-middle">
+              {{ pedido.ubicacionDisplay }}
+            </td>
+          </tr>
+
+          {# SOLICITUD #}
+          <tr>
+            <th width="180" class="text-end">Solicitud:</th>
+            <td class="align-middle">{{ pedido.solicitud is empty ? "-" : pedido.solicitud }}</td>
+          </tr>
+
+          {# TÉCNICO ASIGNADO #}
+          <tr>
+            <th width="180" class="text-end">Encargado:</th>
+            <td class="align-middle">
+              {% if pedido.tecnicoAsignado is not null %}
+                {{ pedido.tecnicoAsignado.apellido~", "~pedido.tecnicoAsignado.nombre }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+          </tr>
+
+          {# EQUIPO #}
+          <tr>
+            <th width="180" class="text-end">Equipo de Trabajo:</th>
+            <td class="align-middle">
+              {% if pedido.pedidoTecnicoAsignados is not empty %}
+                {% set equipoOperativo = false %}
+                {% for asignado in pedido.pedidoTecnicoAsignados %}
+                  {% if asignado.esOperativo %}
+                    {% set equipoOperativo = true %}
+                    <i class="fas fa-user-alt me-2"></i>
+                    {{ asignado.tecnicoAsignado.apellido~", "~asignado.tecnicoAsignado.nombre }} <br>
+                  {% endif %}
+                {% endfor %}
+                {{ equipoOperativo ? '' : '-' }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+          </tr>
+
+          {# SOLUCIÓN #}
+          <tr>
+            <th width="180" class="text-end">Solución:</th>
+            <td class="align-middle">
+              {% if is_granted('TICKET_VER') and pedido.solucionAdjunto is not empty %}
+                <a 
+                  href="#" 
+                  onclick="window.open('{{ asset('uploads/solucion/'~ pedido.solucionAdjunto)}}', '_blank')" 
+                  class="btn btn-sm btn-primary shadow-sm me-2"
+                  title="Visualizar solución adjunta"
+                  style="width:40px;"
+                >
+                  <i class="far fa-eye"></i>
+                </a>
+              {% endif %}
+              {% if pedido.estadoActualNombre == 'Resuelto' %}
+                <a 
+                  class="btn btn-sm btn-primary shadow-sm me-2"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalSubirAdjunto"
+                  title="Editar solución adjunta"
+                  style="width:40px;"
+                >
+                  <i class="fas fa-file-upload"></i>
+                </a>
+              {% endif %}
+              {{ pedido.solucion is empty ? "-" : pedido.solucion }}
+            </td>
+          </tr>
+          
+          {# OBSERVACIÓN #}
+          <tr>
+            <th width="180" class="text-end">Observación:</th>
+            <td class="align-middle">{{ pedido.observacion is empty ? "-" : pedido.observacion }}</td>
+          </tr>
+        
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="d-sm-flex align-items-center justify-content-between">
+    <h4 class="mb-0 mt-3 text-dark"><b>Historial de estados</b></h4>
+  </div>
+  
+  <div class="table-responsive mt-3">
+    <table class="display table table-hover" >
+      {# Títulos de tabla #}
+      <thead>
+        {# ESTADO ACTUAL #}
+        <th scope="col" class="font-weight-semi-bold">
+          #
+        </th>
+        {# ESTADO #}
+        <th scope="col" class="font-weight-semi-bold align-middle text-center">
+          Estado
+        </th>
+        {# USUARIO #}
+        <th scope="col" class="font-weight-semi-bold align-middle text-center">
+          Aplicado
+        </th>
+        {# OBSERVACIÓN #}
+        <th scope="col" class="font-weight-semi-bold align-middle text-center">
+          Observación
+        </th>
+        {# FECHA #}
+        <th scope="col" class="font-weight-semi-bold align-middle text-center">
+          Fecha
+        </th>
+      </thead>
+      {# Contenido de tabla #}
+      <tbody>
+        {% for estado in pedido.pedidoHistorialEstadosOrdenados %}
+          <tr>
+            <td class="align-middle">
+              {% if pedido.estadoActual and estado.id == pedido.estadoActual.id %}
+                {% if estado.pedidoEstado.nombre == "Desestimado" or estado.pedidoEstado.nombre == "Finalizado" %}
+                  <i class="fas fa-check text-success"></i>
+                {% else %}
+                  <i class="fas fa-arrow-right text-danger"></i>
+                {% endif %}
+              {% else %}
+                <i class="fas fa-check text-success"></i>
+              {% endif %}
+            </td>
+            <td class="align-middle text-center">{{ estado.pedidoEstado.nombre }}</td>
+            <td class="align-middle text-center">{{ estado.usuario is not null ? estado.usuario.apellido~", "~estado.usuario.nombre : ' - ' }}</td>
+            <td class="align-middle text-center">{{ estado.observacion is not empty ? estado.observacion : "-" }}</td>
+            <td class="align-middle text-center">{{ estado.fecha is empty ? "-" : estado.fecha|date("d/m/Y H:i:s") }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock rowMain %}
+
+{% block modal_content %}
+  {{ include('pedido/_form_solucion_adjunto.html.twig', { 'pedido': pedido } ) }}
+{% endblock modal_content %}

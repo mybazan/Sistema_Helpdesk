@@ -1,0 +1,81 @@
+{% if form is defined and form|length > 0 %}
+
+	{% set hasData = false %}
+
+	{% for key, value in form.vars.data %}
+		{% if value is not null and value != '' %}
+			{% set hasData = true %}
+		{% endif %}
+	{% endfor %}
+
+	<div class="card shadow mb-4 busqueda-avanzada {{ form.vars.submitted and hasData ? 'border border-primary' : '' }}">
+		<a href="#collapseSearch" class="d-block card-header py-3 collapsed" data-bs-toggle="collapse" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseSearch">
+			<h6 class="m-0 font-weight-bold text-dark">
+				{% if form.vars.submitted and hasData %}
+					<i class="fas fa-search-plus me-3"></i>
+					<b>Búsqueda Aplicada</b>
+				{% else %}
+					<i class="fa fa-search me-3"></i>Buscar
+				{% endif %}
+			</h6>
+		</a>
+		<div class="collapse" id="collapseSearch">
+			<div class="card-body">
+				{{ form_start(form, {attr: {"novalidate":"novalidate"}}) }}
+				{# Campos básicos (Marca, Modelo, Nro Serie y Nro Inventario) #}
+				<div class="row mb-2">
+					<div class="col-md-3">{% if attribute(form, 'marca') is defined %}{{ form_row(form.marca) }}{% endif %}</div>
+					<div class="col-md-3">{% if attribute(form, 'modelo') is defined %}{{ form_row(form.modelo) }}{% endif %}</div>
+					<div class="col-md-3">{% if attribute(form, 'nroSerie') is defined %}{{ form_row(form.nroSerie) }}{% endif %}</div>
+					<div class="col-md-3">{% if attribute(form, 'nroInventario') is defined %}{{ form_row(form.nroInventario) }}{% endif %}</div>
+				</div>
+
+				{# Campos principales (Tipo, Nombre e ID) #}
+				<div class="row mb-2">
+					<div class="col-md-4">{% if attribute(form, 'tipo') is defined %}{{ form_row(form.tipo) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'nombre') is defined %}{{ form_row(form.nombre) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'id') is defined %}{{ form_row(form.id) }}{% endif %}</div>
+				</div>
+
+				{# Campos secundarios (MAC, IP y Condición) #}
+				<div class="row mb-2">
+					<div class="col-md-4">{% if attribute(form, 'mac') is defined %}{{ form_row(form.mac) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'ip') is defined %}{{ form_row(form.ip) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'condicion') is defined %}{{ form_row(form.condicion) }}{% endif %}</div>
+				</div>
+
+				<div class="row mb-2">
+					<div class="col-md-12">{% if attribute(form, 'ubicacion') is defined %}{{ form_row(form.ubicacion) }}{% endif %}</div>
+				</div>
+
+				<div class="col-md-12 mb-2">{% if attribute(form, 'usuario') is defined %}{{ form_row(form.usuario) }}{% endif %}</div>
+
+				<div class="row mb-2">
+					<div class="col-md-4">{% if attribute(form, 'procesador') is defined %}{{ form_row(form.procesador) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'memoriaRAM') is defined %}{{ form_row(form.memoriaRAM) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'sistemaOperativo') is defined %}{{ form_row(form.sistemaOperativo) }}{% endif %}</div>
+				</div>
+
+				{# Filtros de Almacenamiento (en una sola fila) #}
+				<div class="row mb-2">
+					<div class="col-md-4">{% if attribute(form, 'tipoAlmacenamiento') is defined %}{{ form_row(form.tipoAlmacenamiento) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'capacidadAlmacenamiento') is defined %}{{ form_row(form.capacidadAlmacenamiento) }}{% endif %}</div>
+					<div class="col-md-4">{% if attribute(form, 'rolAlmacenamiento') is defined %}{{ form_row(form.rolAlmacenamiento) }}{% endif %}</div>
+				</div>
+
+				{# Botones de acción #}
+				<div class="row mt-2">
+					<div class="col">
+						<button class="float-end btn btn-sm btn-primary" style="margin-left:15px;">Buscar</button>
+						{% if id is defined %}
+							<a class="btn btn-sm float-end btn-light" href="{{ path('index_equipo', {'id': id}) }}">Quitar Filtros</a>
+						{% else %}
+							<a class="btn btn-sm float-end btn-light" href="{{ path('index_equipo') }}">Quitar Filtros</a>
+						{% endif %}
+					</div>
+				</div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endif %}

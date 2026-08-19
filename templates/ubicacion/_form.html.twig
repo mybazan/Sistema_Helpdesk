@@ -1,0 +1,9 @@
+{{ form_start(form) }}
+    {{ form_row(form.nombre) }}
+    {{ form_row(form.nomenclatura) }}
+    {% if form.isActive is defined %}
+        {{ form_row(form.isActive) }}
+    {% endif %}
+    <hr>
+    <button type="submit" class="btn btn-sm btn-outline-primary float-end">Guardar</button>
+{{ form_end(form) }}

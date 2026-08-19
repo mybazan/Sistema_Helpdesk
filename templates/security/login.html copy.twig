@@ -1,0 +1,68 @@
+{% extends 'base/index-alone.html.twig' %}
+
+{% block title %}{{ site_name }}{% endblock %}
+
+{% block contenido %}
+	<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center text-center" style="overflow: auto;">
+		<div class="row w-25" style="min-width:400px; min-height: 300px;">
+			
+			<div class="d-none d-md-none d-lg-block col-lg-4 pr-1 pl-0">
+				<div class="card h-100">
+					<div class="card-body cardToLogin">
+						<a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('inicio_index') }}">
+							<img id="logo-side" class="logo-side" src="{{ asset('base/img/logo.png') }}" alt="TSJ" width="100">
+						</a>
+						<p style="font-size: 0.8rem;">
+							<b>Función Judicial</b><br>
+							Tribunal Superior de Justicia</br>
+							<b>Provincia de La Rioja</b><br><br>
+							©{{ "now"|date("Y") }} 
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-12 col-lg-8 pl-0 pr-0">
+				<div class="card h-100">
+					<h5 class="mt-4 mb-0" style="color: black; font-weight: 600;">{{ site_name|upper }}</h5>	
+					<div class="card-body pt-0">											
+						<form method="post" class="cardToLogin h-100">
+							<div class="mt-3 mb-3 w-100">
+								<span>Usuario</span>
+								<input type="text" value="{{ last_username }}" name="username" id="inputText" class="form-control inputLoggin" required autofocus>
+							</div>
+							<div class="mb-3 w-100">
+								<span>Contraseña</span>
+								<input type="password" name="password" id="inputPassword" class="form-control inputLoggin" required>
+								<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+							</div>
+							<div class="mb-3 w-100 d-flex justify-content-center">
+								<div id="recaptcha"></div>
+							</div>
+
+							<div class="w-100 pb-3">
+								<button 
+								type="submit"
+									class="btn btn-primary submit mt-3 inputLoggin w-100" 
+									id="btnIngresar">
+										Ingresar
+								</button>
+							</div>
+							<div class="clearfix"></div>
+							{% if error %}
+								<div class="alert alert-danger">{{ error }}</div>
+							{% endif %}
+
+							<div class="container">
+								<a class="reset_pass mt-3 text-secondary" href="{{path('app_forgot_password_request')}}">¿Olvidó su contraseña?</a>
+							</div>
+							<div class="container">
+								<a class="mt-3 text-secondary" href="{{path('inicio_ayuda')}}">Preguntas Frecuentes</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>			
+	</div>
+{% endblock %}

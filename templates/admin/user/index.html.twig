@@ -1,0 +1,126 @@
+{% extends "base/index.html.twig" %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-dark"><b>Lista de usuarios</b></h1>
+        {% if is_granted('USERS_CREAR') %}
+            <div class="align-items-center justify-content-end">
+                <a href="{{ path('app_admin_new_user') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fa fa-plus"></i> &nbsp; Nuevo
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+
+        {{ include('admin/user/_filtro.html.twig', {'form': formFiltro}) }}
+        <div class="table-responsive mt-3">
+            <table class="display table table-hover" >
+                {# Títulos de tabla #}
+                <thead>
+                    {# Nombre #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="d-flex align-items-center">
+                            {{ knp_pagination_sortable(pagination, 'Nombre', 'e.nombre') }} &nbsp;
+                            {% if pagination.getSort == 'e.nombre' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'e.nombre' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# Apellido #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="d-flex align-items-center">
+                            {{ knp_pagination_sortable(pagination, 'Apellido', 'e.apellido') }} &nbsp;
+                            {% if pagination.getSort == 'e.apellido' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'e.apellido' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# Username #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="d-flex align-items-center">
+                            {{ knp_pagination_sortable(pagination, 'Usuario', 'e.username') }} &nbsp;
+                            {% if pagination.getSort == 'e.username' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'e.username' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    {# Ubicación #}
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+                        <div class="d-flex align-items-center">
+                            {{ knp_pagination_sortable(pagination, 'Ubicación', 'e.ubicacion.nomenclatura') }} &nbsp;
+                            {% if pagination.getSort == 'e.ubicacion.nomenclatura' and pagination.getDirection == 'asc' %}
+                                <i class="fas fa-caret-up"></i>
+                            {% elseif pagination.getSort == 'e.ubicacion.nomenclatura' and pagination.getDirection == 'desc' %}
+                                <i class="fas fa-caret-down"></i>
+                            {% endif %}
+                        </div>
+                    </th>
+                    <th class="btn-table-width text-center" style="cursor: auto;" width="100px">
+                        Acciones
+                    </th>
+                </thead>
+                {# FIN Títulos de tabla #}
+
+                <tbody>
+                    {% for user in pagination %}
+                        <tr class="{{ user.suspended ? 'table-danger' : '' }}">
+                            <td class="align-middle td-cursor cursorPointer" onClick="window.location='{{ path('show_user',{"id":user.id}) }}'">{{ user.nombre }}</td>
+                            <td class="align-middle td-cursor cursorPointer" onClick="window.location='{{ path('show_user',{"id":user.id}) }}'">{{ user.apellido }}</td>
+                            <td class="align-middle td-cursor cursorPointer" onClick="window.location='{{ path('show_user',{"id":user.id}) }}'">{{ user.username }}</td>
+                            <td class="align-middle td-cursor cursorPointer" onClick="window.location='{{ path('show_user',{"id":user.id}) }}'">
+                            {{ user.ubicacion ? user.ubicacion.nomenclatura : '-' }}
+                            </td>
+                            <td class="btn-cell-table align-middle text-center cursorPointer">
+                                {% if is_granted('USERS_EDITAR') %}
+                                    <a class="btn btn-primary btn-sm btn-table-margin mt-1 mb-1" alt="Editar" href="{{ path('app_admin_edit_user',{"id":user.id}) }}">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('USERS_ELIMINAR') %}
+                                    <a class="btn btn-danger btn-sm btn-table-margin mt-1 mb-1" title="Eliminar registro" data-bs-toggle="modal" data-bs-target="#modalEliminar{{user.id}}">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+
+        {# Pagination #}
+        <div class="row justify-content-between m-0 w-100 mt-2">
+            <div class="col-4">
+                <div class="d-flex mb-2 mb-md-0 d-inline-flex">
+                    {{ pagination.getTotalItemCount }} {{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }} en total
+                </div>
+            </div>
+            <div class="col-4 text-end">
+                <div class="d-inline-flex align-items-end">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+        {# END Pagination #}
+    </div>
+{% endblock %}
+
+{% block modal_content %}
+  {% for user in pagination %}
+    <div id="modalEliminar{{ user.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="eliminarUsuario" aria-hidden="true">
+      <div class="modal-dialog">
+          {{ include('admin/user/_delete_form.html.twig', {'id': user.id }) }}
+      </div>
+    </div>
+  {% endfor %}
+{% endblock modal_content %}

@@ -1,0 +1,23 @@
+{# ALMACENAMIENTO #}
+<tr>
+	<th width="250" class="font-weight-semi-bold py-2 text-end align-top">
+		Almacenamiento:
+	</th>
+	<td class="align-middle">
+		{% set roles = ['Principal', 'Secundario', 'Terciario', 'Backup', 'Sin Uso'] %}
+		{% if equipo.planillaEquipo.almacenamientos|default([])|length > 0 %}
+			{% for almacenamiento in equipo.planillaEquipo.almacenamientos %}
+				<span>
+					<i class="fas fa-hdd me-1"></i>
+					{{ almacenamiento.tipo }}:
+					{{ almacenamiento.capacidad }} GB
+					({{ roles[almacenamiento.rol - 1]|default('-') }})
+					<span class="fst-italic">{{ almacenamiento.observacion|default('') }}</span>
+				</span>
+				<br>
+			{% endfor %}
+		{% else %}
+			<span class="text-muted fst-italic">Sin información de almacenamiento</span>
+		{% endif %}
+	</td>
+</tr>

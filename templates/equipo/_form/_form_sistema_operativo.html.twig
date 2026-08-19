@@ -1,0 +1,208 @@
+{# Prototipo de acceso #}
+{% set accesoPrototype %}
+    <div class="acceso-form mb-3">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                {{ form_label(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.aplicacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.aplicacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+            </div>
+            <div class="col">
+                {{ form_label(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.usuario) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.usuario) | replace({'__name__': '__acceso_prot__'}) | raw }}
+            </div>
+            <div class="col">
+                {{ form_label(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.clave) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.clave) | replace({'__name__': '__acceso_prot__'}) | raw }}
+            </div>
+            <div class="col">
+                {{ form_label(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.observacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.accesos.vars.prototype.observacion) | replace({'__name__': '__acceso_prot__'}) | raw }}
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-sm btn-danger remove-acceso"><i class="fa fa-trash me-1"></i>Eliminar Acceso</button>
+        </div>
+    </div>
+{% endset %}
+
+{# Prototipo de sistema operativo #}
+{% set soPrototype %}
+    <div class="so-form border shadow-sm p-4 mb-2 bg-light rounded-2">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                {{ form_label(form.sistemasOperativos.vars.prototype.nombre) }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.nombre) }}
+            </div>
+            <div class="col-md-3">
+                {{ form_label(form.sistemasOperativos.vars.prototype.version) }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.version) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(form.sistemasOperativos.vars.prototype.observacion) }}
+                {{ form_widget(form.sistemasOperativos.vars.prototype.observacion) }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="accesos mb-3" data-prototype="{{ accesoPrototype|e('html') }}">
+            {# Los accesos se agregarán con JS. #}
+        </div>
+
+        <button type="button" class="add-acceso btn btn-sm btn-primary mb-2"><i class="fa fa-plus me-1"></i>Agregar Acceso</button>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-sm btn-danger remove-so"><i class="fa fa-trash me-1"></i>Eliminar SO</button>
+        </div>
+    </div>
+{% endset %}
+
+{# Contenedor principal #}
+<label class="col-form-label required form-label fw-bold">Sistemas Operativos</label>
+<div id="sistemas-operativos" data-prototype="{{ soPrototype|e('html_attr') }}">
+    {% for soForm in form.sistemasOperativos %}
+        <div class="so-form border shadow-sm p-2 mb-2 bg-light rounded-2">
+            <div class="row mb-3">
+                <div class="col">
+                    {{ form_label(soForm.nombre) }}
+                    {{ form_widget(soForm.nombre) }}
+                </div>
+                <div class="col">
+                    {{ form_label(soForm.version) }}
+                    {{ form_widget(soForm.version) }}
+                </div>
+                <div class="col">
+                    {{ form_label(soForm.observacion) }}
+                    {{ form_widget(soForm.observacion) }}
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="accesos mb-3" data-prototype="{{ accesoPrototype|e('html') }}">
+                {% for accesoForm in soForm.accesos %}
+                    <div class="acceso-form mb-3">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                {{ form_label(accesoForm.aplicacion) }}
+                                {{ form_widget(accesoForm.aplicacion) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_label(accesoForm.usuario) }}
+                                {{ form_widget(accesoForm.usuario) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_label(accesoForm.clave) }}
+                                {{ form_widget(accesoForm.clave) }}
+                            </div>
+                        <div class="col-md-3">
+                            {{ form_label(accesoForm.observacion) }}
+                            {{ form_widget(accesoForm.observacion) }}
+                        </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-danger remove-acceso"><i class="fa fa-trash me-1"></i>Eliminar Acceso</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="add-acceso btn btn-sm btn-primary"><i class="fa fa-plus me-1"></i>Agregar Acceso</button>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-sm btn-danger remove-so"><i class="fa fa-trash me-1"></i>Eliminar SO</button>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<button type="button" id="add-so" class="btn btn-sm btn-primary my-2"><i class="fa fa-plus me-1"></i>Agregar Sistema Operativo</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('sistemas-operativos');
+        const addButton = document.getElementById('add-so');
+
+        // Función para actualizar índices
+        function updateIndexes() {
+            container.querySelectorAll('.so-form').forEach((soFormDiv, soIndex) => {
+                // Actualizar índices en campos del SO
+                soFormDiv.querySelectorAll('[name*="[sistemasOperativos]"]').forEach(input => {
+                    input.name = input.name.replace(/sistemasOperativos\]\[\d+\]/, `sistemasOperativos][${soIndex}]`);
+                    input.id = input.id.replace(/sistemasOperativos_\d+_/, `sistemasOperativos_${soIndex}_`);
+                });
+
+                // Actualizar índices en accesos
+                const accesosContainer = soFormDiv.querySelector('.accesos');
+                if (accesosContainer) {
+                    accesosContainer.querySelectorAll('.acceso-form').forEach((accesoForm, accesoIndex) => {
+                        accesoForm.querySelectorAll('[name*="[accesos]"]').forEach(input => {
+                            input.name = input.name.replace(/accesos\]\[\d+\]/, `accesos][${accesoIndex}]`);
+                            input.id = input.id.replace(/accesos_\d+_/, `accesos_${accesoIndex}_`);
+                        });
+                    });
+                }
+            });
+        }
+
+        // Delegación de eventos para eliminar SO
+        container.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-so')) {
+                e.preventDefault();
+                const soFormDiv = e.target.closest('.so-form');
+                if (soFormDiv) {
+                    if (confirm('¿Está seguro que desea eliminar este sistema operativo?')) {
+                        soFormDiv.remove();
+                        updateIndexes();
+                    }
+                }
+            }
+            
+            // Delegación para agregar accesos
+            if (e.target.closest('.add-acceso')) {
+                e.preventDefault();
+                const addAccesoBtn = e.target.closest('.add-acceso');
+                const soFormDiv = addAccesoBtn.closest('.so-form');
+                const accesosContainer = soFormDiv.querySelector('.accesos');
+                
+                const soIndex = soFormDiv.querySelector('[id*="sistemasOperativos_"]').id.match(/sistemasOperativos_(\d+)/)[1];
+                const accesoIndex = accesosContainer.querySelectorAll('.acceso-form').length;
+                const prototype = accesosContainer.dataset.prototype
+                    .replace(/__name__/g, `${soIndex}__accesos__${accesoIndex}`)
+                    .replace(/sistemasOperativos\]\[__so_prot__\]/g, `sistemasOperativos][${soIndex}]`)
+                    .replace(/accesos\]\[__acceso_prot__\]/g, `accesos][${accesoIndex}]`);
+
+                const div = document.createElement('div');
+                div.classList.add('acceso-form');
+                div.innerHTML = prototype;
+                accesosContainer.appendChild(div);
+                
+                updateIndexes();
+            }
+            
+            // Delegación para eliminar accesos
+            if (e.target.closest('.remove-acceso')) {
+                e.preventDefault();
+                const accesoForm = e.target.closest('.acceso-form');
+                if (accesoForm) {
+                    accesoForm.remove();
+                    updateIndexes();
+                }
+            }
+        });
+
+        // Agregar nuevo SO
+        addButton.addEventListener('click', () => {
+            const prototype = container.dataset.prototype;
+            const newIndex = container.querySelectorAll('.so-form').length;
+            const newForm = prototype.replace(/__so_prot__/g, newIndex);
+            
+            const div = document.createElement('div');
+            div.innerHTML = newForm;
+            container.appendChild(div);
+            
+            updateIndexes();
+        });
+
+        // Actualizar índices al cargar la página
+        updateIndexes();
+    });
+</script>

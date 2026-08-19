@@ -1,0 +1,37 @@
+{% if form is defined and form|length > 0 %}
+
+	{% set hasData = false %}
+
+	{% for key, value in form.vars.data %}
+		{% if value is not null and value != '' %}
+			{% set hasData = true %}
+		{% endif %}
+	{% endfor %}
+
+	<div class="card shadow mb-4 busqueda-avanzada {{ form.vars.submitted and hasData ? 'border border-primary' : '' }}">
+		<a href="#collapseSearch" class="d-block card-header py-3 collapsed" data-bs-toggle="collapse" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseSearch">
+			<h6 class="m-0 font-weight-bold text-dark">
+				{% if form.vars.submitted and hasData %}
+					<i class="fas fa-search-plus me-3"></i>
+					<b>Búsqueda Aplicada</b>
+				{% else %}
+					<i class="fa fa-search me-3"></i>Buscar
+				{% endif %}
+			</h6>
+		</a>
+		<div class="collapse" id="collapseSearch">
+			<div class="card-body">
+				{{ form_start(form, {attr: {"novalidate":"novalidate"}}) }}
+				{{ form_widget(form) }}
+				<div class="row mt-2">
+					<div class="col">
+						<button class="btn btn-sm btn-primary float-end" style="margin-left:15px;">Buscar</button>
+						<a class="btn btn-sm float-end btn-light" href="{{ path('ticket_index') }}">Quitar Filtro</a>
+					</div>
+				</div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+
+{% endif %}

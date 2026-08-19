@@ -1,0 +1,118 @@
+{{ form_start(form) }} 
+    {{ form_widget(form) }}
+    <p class="mt-3 fw-light">Los campos marcados con * deben ser completados.</p>
+    <hr>
+    <button id="guardar-button" class="btn btn-sm float-end btn-outline-primary mx-2" type="submit">Guardar</button>
+    <button id="deshacer-button" class="btn btn-sm float-end btn-outline-danger" type="button" style="display:none;">Deshacer cambios</button>
+
+{% if app.request.attributes.get('_route') != "subir_croquis_equipo" %}
+    {# Último equipo registrado #}
+    <div id="ultimo-equipo-container">
+        <b id="ultimo-equipo" class="mt-2">Último equipo cargado: -</b>
+    </div>
+{% endif %}
+
+{{ form_end(form) }}
+
+{% if app.request.attributes.get('_route') != "subir_croquis_equipo" %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ubicacionSelect = $('#equipo_ubicacion');
+            const tipoEquipoSelect = $('#equipo_tipo');
+            const nombreInput = $('#equipo_nombre');
+            const ultimoEquipoContainer = $('#ultimo-equipo');
+            const deshacerButton = $('#deshacer-button');
+            
+            let originalNombre = nombreInput.val();
+            let nombreActualizado = false;
+
+            const originalUbicacion = ubicacionSelect.val();
+            const originalTipoEquipo = tipoEquipoSelect.val();
+            
+            let isUndoing = false;
+
+            function actualizarNombre() {
+                if (isUndoing) return;
+
+                const ubicacionOption = ubicacionSelect.find(':selected');
+                const tipoEquipoOption = tipoEquipoSelect.find(':selected');
+
+                const nomenclaturaUbicacion = ubicacionOption.data('ubicacionnomenclatura') || 'UUU';
+                const nomenclaturaTipo = tipoEquipoOption.data('tipoequiponomenclatura') || 'TT';
+                const numeroEquipo = '##';
+
+                const nomenclaturaBase = `${nomenclaturaUbicacion}${nomenclaturaTipo}`;
+                
+                if (ubicacionSelect.val() === originalUbicacion &&
+                    tipoEquipoSelect.val() === originalTipoEquipo) {
+                    return;
+                }
+
+                const esEdicion = nombreInput.val().match(/\d+$/);
+                
+                if (!esEdicion) {
+                    nombreInput.val(`${nomenclaturaBase}${numeroEquipo}`);
+                }
+
+                const url = `/equipo/ultimo-equipo/${encodeURIComponent(nomenclaturaBase)}`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const ultimoEquipo = data.ultimoEquipo || '';
+                        let nuevoNumero = '00';
+
+                        if (ultimoEquipo) {
+                            const match = ultimoEquipo.match(/(\d+)$/);
+                            const ultimoNumero = match ? parseInt(match[0]) : 0;
+                            nuevoNumero = ultimoNumero + 1;
+                            if (nuevoNumero < 10) {
+                                nuevoNumero = String(nuevoNumero).padStart(2, '0');
+                            }
+                        }
+
+                        const nuevoNombre = `${nomenclaturaBase}${nuevoNumero}`;
+                        nombreInput.val(nuevoNombre);
+
+                        ultimoEquipoContainer.html(`<p id="ultimo-equipo" class="mt-2">Último equipo cargado: ${ultimoEquipo || '-'}</p>`);
+
+                        if (nombreInput.val() !== originalNombre) {
+                            deshacerButton.show();
+                            nombreActualizado = true;
+                        }
+                    })
+                    .catch(error => console.error('Error al obtener el último equipo:', error));
+            }
+
+            ubicacionSelect.on("change.select2", actualizarNombre);
+            tipoEquipoSelect.on("change.select2", actualizarNombre);
+
+            nombreInput.on("input", function() {
+                if (nombreInput.val() !== originalNombre) {
+                    deshacerButton.show();
+                    nombreActualizado = true;
+                }
+            });
+
+            deshacerButton.on('click', function() {
+                isUndoing = true;
+
+                nombreInput.val(originalNombre);
+                ubicacionSelect.val(originalUbicacion).trigger('change');
+                tipoEquipoSelect.val(originalTipoEquipo).trigger('change');
+
+                actualizarNombre();
+
+                deshacerButton.hide();
+                nombreActualizado = false;
+
+                setTimeout(() => {
+                    isUndoing = false;
+                }, 0);
+            });
+
+            actualizarNombre();
+        });
+    </script>
+
+{% endif %}

@@ -1,0 +1,186 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Equipos{% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between">
+		<h1 class="h3 mb-0 text-dark">
+			<b>Gestión de Equipos</b>
+		</h1>
+	</div>
+
+	<div class="d-flex justify-content-end mb-3">
+		{% if is_granted('EQUIPO_CREAR') %}
+			<a href="{{ path('new_equipo') }}" class="btn btn-sm btn-primary shadow-sm me-2">
+				<i class="fa fa-plus"></i>
+				&nbsp; Nuevo Equipo
+			</a>
+		{% endif %}
+		<div class="dropdown-center">
+			<button class="btn btn-sm btn-primary shadow-sm me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+				<i class="fas fa-file-export me-2"></i>Exportar
+			</button>
+			<ul class="dropdown-menu">
+				<li><a class="dropdown-item" href="{{ path('equipos_print', app.request.query.all) }}" target="_blank">Planilla filtrada (PDF)</a></li>
+				<li><a class="dropdown-item" href="{{ path('equipos_print_excel', app.request.query.all) }}">Planilla completa filtrada (XLSX)</a></li>
+			</ul>
+		</div>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+	<div class="col">
+
+		{{ include('equipo/_filtro.html.twig', {'form': formFiltro}) }}
+
+		<div class="table-responsive mt-3">
+			<table
+				class="display table table-hover">
+				{# Títulos de tabla #}
+				<thead>
+					{# TIPO EQUIPO #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+						<div>
+							{{ knp_pagination_sortable(pagination, 'Tipo de Equipo', 't.nombre') }}
+							&nbsp;
+							{% if pagination.getSort == 't.nombre' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 't.nombre' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# IDENTIFICADOR #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="8%">
+						<div>
+							{{ knp_pagination_sortable(pagination, 'ID', 'c.id') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.id' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.id' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# NOMBRE DE EQUIPO #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+						<div>
+							{{ knp_pagination_sortable(pagination, 'Nombre', 'c.nombre') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.nombre' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.nombre' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# MAC #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							{{ knp_pagination_sortable(pagination, 'Dirección MAC', 'c.mac') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.mac' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.mac' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# IP #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							{{ knp_pagination_sortable(pagination, 'Dirección IP', 'c.ip') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.ip' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.ip' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# CONDICION #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center align-middle">
+							{{ knp_pagination_sortable(pagination, 'Condición', 'c.condicion') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.condicion' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.condicion' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% else %}
+								<i class="fas fa-sort"></i>
+							{% endif %}
+							&nbsp;
+						</div>
+					</th>
+				</thead>
+				{# END Títulos de tabla #}
+				{# Contenido de tabla #}
+				<tbody>
+					{% for equipo in pagination %}
+						<tr {% if is_granted('EQUIPO_VER') %} data-bs-toggle="modal" data-bs-target="#modalAction{{equipo.id}}" class="td-cursor cursorPointer" {% endif %}>
+							<td class="align-middle td-cursor cursorPointer">{{ equipo.tipo.nombre }}</td>
+							<td class="align-middle td-cursor cursorPointer">{{ equipo.id }}</td>
+							<td class="align-middle td-cursor cursorPointer">{{ equipo.nombre }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">{{ equipo.mac|default('-') }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">{{ equipo.ip|default('-') }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">
+								{# Activo #}
+								{% if equipo.condicion == 1 %}
+									<i class="fas fa-check-circle text-success" title="Activo"></i>
+									{# Prestado #}
+								{% elseif equipo.condicion == 2 %}
+									<i class="fas fa-hand-holding text-warning" title="Prestado"></i>
+									{# Fuera de Servicio #}
+								{% elseif equipo.condicion == 3 %}
+									<i class="fas fa-exclamation-circle text-danger" title="Fuera de Servicio"></i>
+								{% elseif not equipo.condicion %}
+									<i class="fas fa-minus text-dark" title="Sin Condición"></i>
+								{% endif %}
+							</td>
+						</tr>
+					{% else %}
+					<tr>
+					<td class="text-center" colspan="6">- Sin Registros -</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+				{# END Contenido de tabla #}
+			</table>
+		</div>
+
+		{# Paginación #}
+		<div class="row justify-content-between m-0 w-100 mt-2">
+			<div class="col-4">
+				<div class="d-flex mb-2 mb-md-0 d-inline-flex">
+					{{ pagination.getTotalItemCount }}
+					{{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }}
+					en total
+				</div>
+			</div>
+			<div class="col-4 text-end">
+				<div class="d-inline-flex align-items-end">
+					{{ knp_pagination_render(pagination) }}
+				</div>
+			</div>
+		</div>
+		{# END Paginación #}
+
+	</div>
+{% endblock %}
+
+{% block modal_content %}
+	{% for equipo in pagination %}
+		{{ include('equipo/_modal_action_form.html.twig', { 'equipo': equipo} ) }}
+	{% endfor %}
+{% endblock modal_content %}

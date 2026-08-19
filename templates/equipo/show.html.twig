@@ -1,0 +1,410 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Equipos{% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h4 mb-0 text-dark">
+			<b>Equipo ID {{ equipo.id }}</b>
+		</h1>
+		<div class="align-items-center justify-content-end">
+			<a href="#" class="d-md-inline-block btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPrint">
+				<i class="fas fa-file-pdf me-2"></i>
+				Exportar
+			</a>
+			<a href="{{ path('equipo_historial_index', {'id': equipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+				<i class="fa fa-clock me-2"></i>
+				Ver Historial
+			</a>
+			{% if is_granted('EQUIPO_EDITAR') %}
+				<a href="{{ path('edit_equipo',{"id":equipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+					<i class="fa fa-edit me-2"></i>
+					Editar
+				</a>
+			{% endif %}
+
+			<a href="{{ referrer is not empty ? referrer : path('index_equipo', { 'page': page }) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+				<i class="fa fa-reply"></i>
+				&nbsp; Volver al listado
+			</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+
+	<div class="col">
+		{# PRINCIPAL #}
+		<div class="table-responsive mt-3 pb-3">
+			<table class="table">
+				<tbody>
+					{# TIPO EQUIPO #}
+					<tr>
+						<th width="150" class="text-end">Tipo:</th>
+						<td class="align-middle">{{ equipo.tipo.nombre }}</td>
+					</tr>
+					{# Nombre #}
+					<tr>
+						<th class="text-end">Nombre:</th>
+						<td class="align-middle">{{ equipo.nombre }}</td>
+					</tr>
+					{# Dirección MAC #}
+					<tr>
+						<th class="text-end">Dirección MAC:</th>
+						<td class="align-middle">{{ equipo.mac|default('-') }}</td>
+					</tr>
+					{# Dirección IP #}
+					<tr>
+						<th class="text-end">Dirección IP:</th>
+						<td class="align-middle">{{ equipo.ip|default('-') }}</td>
+					</tr>
+					{# Condición #}
+					<tr>
+						<th class="text-end">Condición:</th>
+						<td>
+							{# Activo #}
+							{% if equipo.condicion == 1 %}
+								Activo
+								<i class="fas fa-check-circle text-success" title="Activo"></i>
+								{# Prestado #}
+							{% elseif equipo.condicion == 2 %}
+								Prestado
+								<i class="fas fa-hand-holding text-warning" title="Prestado"></i>
+								{# Fuera de Servicio #}
+							{% elseif equipo.condicion == 3 %}
+								Fuera de Servicio
+								<i class="fas fa-exclamation-circle text-danger" title="Fuera de Servicio"></i>
+							{% elseif not equipo.condicion %}
+								Sin Condición
+								<i class="fas fa-minus text-dark" title="Sin Condición"></i>
+							{% endif %}
+						</td>
+					</tr>
+					{# VINCULADO AL EQUIPO #}
+					<tr>
+						<th class="text-end">Vinculado a:</th>
+						<td class="align-middle">{{ equipo.parent ? equipo.parent.nombre : 'Sin equipos vinculados' }}</td>
+					</tr>
+					{# Observación #}
+					<tr>
+						<th class="text-end">Observación:</th>
+						<td class="align-middle">{{ equipo.observacion|default('-') }}</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+
+		{% if tipoEquipo in ['DVR', 'Reloj Biométrico', 'Cámara', 'Computadora de Escritorio', 'Notebook', 'Servidor', 'Dispositivo de Interconexión', 'Impresora', 'Fotocopiadora'] %}
+			<div class="d-sm-flex align-items-center justify-content-between mb-4 my-4">
+				<h1 class="h4 mb-0 text-dark">
+					<b>Planilla del Equipo</b>
+				</h1>
+				<div class="align-items-center justify-content-end">
+					{% if is_granted('EQUIPO_EDITAR') %}
+						{% if equipo.planillaEquipo %}
+							<a class="float-end d-md-inline-block btn btn-sm btn-danger shadow-sm " data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+								<i class="fa fa-trash"></i>
+								&nbsp; Eliminar Planilla
+							</a>
+							{# modal boton eliminar #}
+							<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmDeleteModalLabel">Planilla del Equipo</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											¿Estás seguro de que deseas eliminar esta planilla?
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+											<form method="post" action="{{ path('delete_planilla_equipo', { 'id': equipo.planillaEquipo.id }) }}" class="d-inline">
+												<input type="hidden" name="_token" value="{{ csrf_token('delete_planilla' ~ equipo.planillaEquipo.id) }}">
+												<button type="submit" class="btn btn-danger">Eliminar</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							{# finaliza modal boton eliminar #}
+							<a href="{{ path('edit_planilla_equipo', {'id': equipo.planillaEquipo.id }) }}" class="float-end d-md-inline-block btn btn-sm btn-primary shadow-sm mx-1">
+								<i class="fa fa-edit"></i>
+								&nbsp; Editar Planilla
+							</a>
+						{% else %}
+							<a href="{{ path('new_planilla_equipo', {'id': equipo.id}) }}" class="float-end d-md-inline-block btn btn-sm btn-primary shadow-sm">
+								<i class="fa fa-plus"></i>
+								&nbsp; Agregar Planilla
+							</a>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			<div class="col">
+				{{ include('equipo/_planillas/_planilla.html.twig') }}
+			</div>
+		{% endif %}
+
+		{# USUARIOS #}
+		<div class="d-sm-flex align-items-center justify-content-between mb-4 my-4">
+			<h1 class="h4 mb-0 text-dark">
+				<b>Usuarios del Equipo</b>
+			</h1>
+			<div class="align-items-center justify-content-end">
+				{% if is_granted('EQUIPO_EDITAR') %}
+					<a href="{{ path('personal_index',{"id":equipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+						<i class="fa fa-user-plus"></i>
+						&nbsp; Agregar Usuario
+					</a>
+					{% if equipo.usuarios|filter(u => u.isActual)|length > 0 %}
+						<a href="{{ path('personal_index',{"idT":equipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+							<i class="fa fa-retweet"></i>
+							&nbsp; Traspaso de Equipo
+						</a>
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+
+		{% set usuariosActuales = equipo.usuarios|filter(u => u.isActual) %}
+
+		<div class="table-responsive mt-3 pb-3 mx-5">
+			{% if usuariosActuales|length > 0 %}
+				<table class="table">
+					<thead>
+						{# APELLIDO #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+							Personal
+						</th>
+						{# DNI #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							DNI
+						</th>
+						{# EMAIL #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Correo Electrónico
+						</th>
+						{# TELEFONO #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Teléfono
+						</th>
+						{# REPARTICION #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Repartición
+						</th>
+						{# FECHA #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Desde
+						</th>
+						<th></th>
+					</thead>
+					{# END Títulos de tabla #}
+
+					{# Contenido de tabla #}
+					<tbody>
+						{% for p in equipo.usuarios %}
+							{% if p.isActual  %}
+								<tr>
+									<td class="align-middle td-cursor cursorPointer">{{ p.usuario.apellido ~ ', ' ~ p.usuario.nombre  }}</td>
+									<td class="align-middle td-cursor cursorPointer">{{ p.usuario.dni }}</td>
+									<td class="align-middle td-cursor cursorPointer">{{ p.usuario.email }}</td>
+									<td class="align-middle td-cursor cursorPointer">{{ p.usuario.telefono }}</td>
+									<td class="align-middle td-cursor cursorPointer">{{ p.usuario.ubicacion.nomenclatura|default('') }}</td>
+									<td class="align-middle td-cursor cursorPointer">{{ p.fechaInicio|date('d/m/Y') }}</td>
+									<td class="align-middle td-cursor cursorPointer">
+										<button class="btn btn-sm btn-danger" data-bs-target="#modalBajaUsuario{{p.id}}" data-bs-toggle="modal" title="Dar de baja al usuario">
+											<i class="fas fa-user-slash"></i>
+										</button>
+										<button class="btn btn-sm btn-danger" data-bs-target="#modalDeleteUsuario{{p.id}}" data-bs-toggle="modal" title="Eliminar registro del usuario">
+											<i class="fa fa-trash"></i>
+										</button>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<h3 class="h5 mb-0 text-danger">No tiene ningún usuario designado...</h3>
+			{% endif %}
+		</div>
+
+		{# EQUIPOS #}
+		<div class="d-sm-flex align-items-center justify-content-between mb-4 my-4">
+			<h1 class="h4 mb-0 text-dark">
+				<b>Equipos Vinculados</b>
+			</h1>
+			<div class="align-items-center justify-content-end">
+				{% if is_granted('EQUIPO_EDITAR') %}
+					<a href="{{ path('index_equipo',{"id":equipo.id}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+						<i class="fa fa-plus"></i>
+						&nbsp; Vincular Equipo
+					</a>
+				{% endif %}
+			</div>
+		</div>
+
+		<div class="table-responsive mt-3 pb-3 mx-5">
+			{% if equipo.children|length > 0 %}
+				<table class="table">
+					<thead>
+						{# TIPO EQUIPO #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+							Tipo
+						</th>
+						{# NOMBRE #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							nombre
+						</th>
+						{# MAC #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Mac
+						</th>
+						{# DIRECCION IP #}
+						<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+							Dirección
+						</th>
+						<th></th>
+					</thead>
+					{# END Títulos de tabla #}
+
+					{# Contenido de tabla #}
+					<tbody>
+						{% for chi in equipo.children %}
+							<tr>
+								<td class="align-middle td-cursor cursorPointer">{{ chi.tipo.nombre  }}</td>
+								<td class="align-middle td-cursor cursorPointer">{{ chi.nombre }}</td>
+								<td class="align-middle td-cursor cursorPointer">{{ chi.mac }}</td>
+								<td class="align-middle td-cursor cursorPointer">{{ chi.ip }}</td>
+								<td>
+									<button class="btn btn-sm btn-danger" data-bs-target="#modalDeleteChi{{chi.id}}" data-bs-toggle="modal">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<h3 class="h5 mb-0 text-danger">No tiene ningún equipo vinculado...</h3>
+			{% endif %}
+		</div>
+
+		{# UBICACION #}
+		<div class="d-sm-flex align-items-center justify-content-between mb-4 my-4">
+			<h1 class="h4 mb-0 text-dark">
+				<b>Ubicación del Equipo</b>
+			</h1>
+		</div>
+
+		<div class="table-responsive mt-3 pb-3 mx-5">
+			<table class="table">
+				<thead>
+					{% if equipo.ubicacion %}
+						<tr>
+							<th width="150" class="text-end">Ubicación:</th>
+							<td class="align-middle">{{ equipo.ubicacion.nomenclatura }}</td>
+						</tr>
+					{% endif %}
+					{# Croquis #}
+					<tr>
+						<th class="text-end">Croquis:</th>
+						<td class="align-middle">
+							{% if equipo.croquis %}
+								<a class="d-md-inline-block btn btn-sm btn-primary shadow-sm" target="_block" href="{{ asset('uploads/croquis/equipo/' ~ equipo.croquis) }}">
+									<i class="fas fa-eye me-2"></i>
+									Ver Croquis
+								</a>
+								<a class="d-md-inline-block btn btn-sm btn-primary shadow-sm" href="{{ path('subir_croquis_equipo',{'id': equipo.id}) }}">
+									<i class="fas fa-pen me-2"></i>
+									Editar Croquis
+								</a>
+							{% else %}
+								<a class="d-md-inline-block btn btn-sm btn-primary shadow-sm" href="{{ path('subir_croquis_equipo',{'id': equipo.id}) }}">
+									<i class="fas fa-upload"></i>
+									Cargar Croquis
+								</a>
+							{% endif %}
+						</td>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+{% endblock rowMain %}
+
+{% block modal_content %}
+
+	{{ include('equipo/_modal_print.html.twig', {'equipo': equipo}) }}
+
+	{% if is_granted('EQUIPO_EDITAR' ) %}
+		{# Modal Eliminar Usuarios #}
+		{% for p in equipo.usuarios %}
+			<div class="modal fade" id="modalDeleteUsuario{{p.id}}" aria-hidden="true" aria-labelledby="modalActionDelUsuarioLabel" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="modalActionDelUsuarioLabel">Eliminar Usuario</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>Está por eliminar el registro generado para el usuario
+								<b>{{ p.usuario.apellido ~ ', ' ~ p.usuario.nombre }}</b>.<br></p>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit" onclick="window.location='{{ path('eliminar_personal_equipo', {'id': p.id}) }}'">Confirmar</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+		{# Modal Eliminar equipos vinculados #}
+		{% for chi in equipo.children %}
+			<div class="modal fade" id="modalDeleteChi{{chi.id}}" aria-hidden="true" aria-labelledby="modalActionDelChiLabel" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="modalActionDelChiLabel">Eliminar '{{ chi.nombre }}'</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>Está por eliminar la vinculación del equipo
+								<b>{{ chi.nombre }}</b>.<br></p>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit" onclick="window.location='{{ path('desvincular_equipo', {'id': chi.id}) }}'">Confirmar</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+		{# Modal Baja de Usuario #}
+		{% for p in equipo.usuarios %}
+			<div class="modal fade" id="modalBajaUsuario{{p.id}}" aria-hidden="true" aria-labelledby="modalActionBajaUsuarioLabel" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="modalActionBajaUsuarioLabel">Bajar usuario</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>Está por dar de baja al personal
+								<b>{{ p.usuario.apellido ~ ', ' ~ p.usuario.nombre }}</b>.<br></p>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit" onclick="window.location='{{ path('bajar_personal_equipo', {'id': p.id}) }}'">Confirmar</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+{% endblock modal_content %}

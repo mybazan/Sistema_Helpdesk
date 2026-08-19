@@ -1,0 +1,22 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Nueva ubicación{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>Nueva ubicación</b></h1>
+        <a href="{{ path('ubicacion_index') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Volver al listado
+        </a>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                {{ include('ubicacion/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

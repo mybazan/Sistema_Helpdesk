@@ -1,0 +1,77 @@
+<div class="modal fade" id="modalAction{{tipo.id}}" aria-hidden="true" aria-labelledby="modalActionLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalActionLabel">Acciones sobre {{ tipo.nombre }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Qué acción desea realizar sobre el elemento '{{tipo.nombre}}'?
+      </div>
+      <div class="modal-footer justify-content-md-center">
+        
+        {% if is_granted('TIPO_EQUIPO_ELIMINAR') %}
+          <button class="btn btn-danger" data-bs-target="#modalActionDelete{{tipo.id}}" data-bs-toggle="modal"><i class="fa fa-trash me-2"></i>Eliminar</button>
+        {% endif %}
+        {% if is_granted('TIPO_EQUIPO_EDITAR') %}
+        <button class="btn btn-primary" data-bs-target="#modalActionActive{{tipo.id}}" data-bs-toggle="modal">{{ tipo.isActive ? '<i class="fas fa-times me-2"></i>Desactivar' : '<i class="fas fa-check me-2"></i>Activar' }}</button>
+        {% endif %}
+        {% if is_granted('TIPO_EQUIPO_EDITAR') %}
+        <button class="btn btn-primary" onClick="window.location='{{ path('tipo_equipo_edit', {'id': tipo.id}) }}'"><i class="fas fa-pen me-2"></i>Editar</button>
+        {% endif %}
+        {% if is_granted('TIPO_EQUIPO_VER') %}
+            <button class="btn btn-primary" onClick="window.location='{{ path('tipo_equipo_show', {'id': tipo.id}) }}'"><i class="fas fa-eye me-2"></i>Ver</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# MODAL ELIMINAR #}
+{% if is_granted('TIPO_EQUIPO_ELIMINAR') %}
+<div class="modal fade" id="modalActionDelete{{tipo.id}}" aria-hidden="true" aria-labelledby="modalActionDeleteLabel2" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalActionDeleteLabel2">Eliminar '{{ tipo.nombre }}'</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Está por eliminar el registro <b>{{ tipo.nombre }}</b>.<br></p>
+        <p><i class="fas fa-info-circle me-2 text-primary"></i>Esta acción no podrá realizarse si el mismo es utilizado en otro registro.</p>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-target="#modalAction{{tipo.id}}" data-bs-toggle="modal">Volver</button>
+          <form method="post" action="{{ path('tipo_equipo_delete', {'id': tipo.id}) }}" class="d-inline">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tipo.id) }}">
+            <button class="btn btn-danger" type="submit"><i class="fa fa-trash me-2"></i>Confirmar</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# MODAL ACTIVAR #}
+{% if is_granted('TIPO_EQUIPO_EDITAR') %}
+<div class="modal fade" id="modalActionActive{{tipo.id}}" aria-hidden="true" aria-labelledby="modalActionActiveLabel2" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalActionActiveLabel2">{{ tipo.isActive ? 'Desactivar' : 'Activar' }} '{{ tipo.nombre }}'</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Esta por {{ tipo.isActive ? 'desactivar' : 'activar' }} el registro <b>{{ tipo.nombre }}</b>.<br>
+          Esta acción hará que el registro {{ tipo.isActive ? 'no' : '' }} figure como una opción seleccionable en los campos relacionados a <b>tipos de equipos</b>.
+        </p>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-target="#modalAction{{tipo.id}}" data-bs-toggle="modal">Volver</button>
+          <button class="btn btn-danger" type="submit" onClick="window.location='{{ path('tipo_equipo_edit_active', {'id': tipo.id}) }}'">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

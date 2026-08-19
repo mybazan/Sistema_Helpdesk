@@ -1,0 +1,58 @@
+{% import _self as _selfMacro %}
+{% if form.almacenamientos is defined %}
+	<div class="form-group row">
+		<label class="col-form-label required form-label fw-bold">Almacenamiento</label>
+		<div class="col-12">
+			<div class="row">
+				<div class="col-12" data-collection="almacenamientos" data-prototype="{{ _selfMacro.adjuntor(form.almacenamientos.vars.prototype, '__almacenamientos__')|e }}">
+					{{ form_errors(form.almacenamientos) }}
+					{% for almacenamiento in form.almacenamientos %}
+						{{ _selfMacro.adjuntor(almacenamiento, loop.index0) }}
+					{% endfor %}
+				</div>
+				<div class="col-12">
+					<p>
+						<button type="button" class="btn btn-sm btn-primary" data-collection-add="almacenamientos">
+							<i class="fa fa-plus"></i>
+							Agregar Almacenamiento
+						</button>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% macro adjuntor(almacenamiento, id) %}
+		<div class="row mb-1 bg-lighter p-2" data-group="almacenamientos" data-contacto-id="{{ id }}">
+			<div class="acceso-form card shadow-sm">
+				<div class="card-body">
+					<div class="row g-3 align-items-end">
+						<div class="col-md-3">
+							{{ form_label(almacenamiento.tipo) }}
+							{{ form_widget(almacenamiento.tipo) }}
+						</div>
+						<div class="col-md-3">
+							{{ form_label(almacenamiento.capacidad) }}
+							{{ form_widget(almacenamiento.capacidad) }}
+						</div>
+						<div class="col-md-3">
+							{{ form_label(almacenamiento.rol) }}
+							{{ form_widget(almacenamiento.rol) }}
+						</div>
+						<div class="col-md-3">
+							{{ form_label(almacenamiento.observacion) }}
+							{{ form_widget(almacenamiento.observacion) }}
+						</div>
+
+						<div class="col-12 text-end mt-3">
+							<button data-collection-del="almacenamientos" data-collection-parent-to-remove='[data-group="almacenamientos"]' class="btn btn-sm btn-danger">
+								<i class="fa fa-trash me-1"></i>
+								Eliminar Almacenamiento
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endmacro %}
+{% endif %}

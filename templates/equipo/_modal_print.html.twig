@@ -1,0 +1,43 @@
+{% set checkboxes = [
+    {'name': 'show_especificaciones', 'label': 'Especificaciones'},
+    {'name': 'show_almacenamiento', 'label': 'Almacenamiento'},
+    {'name': 'show_sistemas_operativos', 'label': 'Sistemas Operativos y Accesos', 'cond': equipo.planillaEquipo ? equipo.planillaEquipo.sistemasOperativos|length > 0 : false},
+    {'name': 'show_accesos', 'label': 'Accesos Generales', 'cond': equipo.planillaEquipo ? equipo.planillaEquipo.accesos|length > 0 : false},
+    {'name': 'show_historial', 'label': 'Historiales'}
+] %}
+
+<div class="modal fade" id="modalPrint" aria-hidden="true" aria-labelledby="modalActionLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalActionLabel">Exportar Datos del Equipo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="get" action="{{ path('equipos_info_print', {'id': equipo.id}) }}" target="_blank">
+                <div class="modal-body justify-content-md-center">
+                    <p>Seleccione las secciones a incluir en el documento:</p>
+                    <div class="row">
+                        {% for i in [0, 1] %}
+                            <div class="col-md-6">
+                                {% for item in checkboxes|slice(i * 3, 3) %}
+                                    {% if item.cond is not defined or item.cond %}
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input bg-success" type="checkbox" role="switch" name="{{ item.name }}" id="{{ item.name }}" checked>
+                                            <label class="form-check-label" for="{{ item.name }}">
+                                                {{ item.label }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-md-center">
+                    <button type="submit" class="btn btn-primary">Generar Documento</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+
+<div class="modal-content">
+  <div class="modal-header text-dark">
+    <h5 class="modal-title">Eliminar un registro</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    <p>Esta por eliminar el registro '{{user.username}}'.</p>
+  </div>
+
+  <div class="modal-footer float-none">
+    <form class="spaceEven w-100" method="post" action="{{ path('app_admin_delete_user', {'id': user.id}) }}">
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+      <button class="btn btn-danger" type="submit" >
+        <i class="fas fa-trash"></i>&nbsp
+        Continuar
+      </button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="fas fa-redo"></i>&nbsp
+        Cancelar
+      </button>
+    </form>
+  </div>
+</div>

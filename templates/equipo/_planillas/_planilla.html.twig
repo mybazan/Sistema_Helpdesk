@@ -1,0 +1,84 @@
+{% if equipo.planillaEquipo and tipoEquipo in ['DVR', 'Reloj Biométrico', 'Cámara', 'Computadora de Escritorio', 'Notebook', 'Servidor', 'Dispositivo de Interconexión', 'Impresora', 'Fotocopiadora'] %}
+	<div class="container-fluid mt-4">
+		<div class="accordion" id="accordionPanelsStayOpenExample">
+			<div class="accordion-item">
+				<h2 class="accordion-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+						Ver Información
+					</button>
+				</h2>
+				<div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+					<div class="accordion-body">
+						<div class="table-responsive mt-3 pb-3 mx-4">
+							<table class="table">
+								<thead>
+									{# CAMPOS GENERALES DE LA PLANILLA #}
+									{% if tipoEquipo in ['DVR', 'Reloj Biométrico', 'Cámara', 'Computadora de Escritorio', 'Notebook', 'Servidor', 'Dispositivo de Interconexión', 'Impresora', 'Fotocopiadora'] %}
+										{# MARCA #}
+										<tr>
+											<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+												Marca:
+											</th>
+											<td>{{ equipo.planillaEquipo.marca|default('-') }}</td>
+										</tr>
+										{# MODELO #}
+										<tr>
+											<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+												Modelo:
+											</th>
+											<td>{{ equipo.planillaEquipo.modelo|default('-') }}</td>
+										</tr>
+										{# NUMERO DE SERIE #}
+										<tr>
+											<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+												N° Serie:
+											</th>
+											<td>{{ equipo.planillaEquipo.nroSerie|default('-') }}</td>
+										</tr>
+										{# NUMERO DE INVENTARIO #}
+										<tr>
+											<th width="200" class="font-weight-semi-bold py-2 text-end" style="cursor: auto;">
+												N° Inventario:
+											</th>
+											<td>{{ equipo.planillaEquipo.nroInventario|default('-') }}</td>
+										</tr>
+									{% endif %}
+									{% if tipoEquipo == 'Computadora de Escritorio' %}
+										{{ include('equipo/_planillas/_pc.html.twig') }}
+									{% elseif tipoEquipo == 'DVR' %}
+										{{ include('equipo/_planillas/_dvr.html.twig') }}
+									{% elseif tipoEquipo == 'Reloj Biométrico' %}
+										{{ include('equipo/_planillas/_reloj_biometrico.html.twig') }}
+									{% elseif tipoEquipo == 'Cámara' %}
+										{{ include('equipo/_planillas/_camara.html.twig') }}
+									{% elseif tipoEquipo == 'Fotocopiadora' %}
+										{{ include('equipo/_planillas/_fotocopiadora.html.twig') }}
+									{% elseif tipoEquipo == 'Impresora' %}
+										{{ include('equipo/_planillas/_impresora.html.twig') }}
+									{% elseif tipoEquipo == 'Notebook' %}
+										{{ include('equipo/_planillas/_notebook.html.twig') }}
+									{% elseif tipoEquipo == 'Dispositivo de Interconexión' %}
+										{{ include('equipo/_planillas/_interconexion.html.twig') }}
+									{% elseif tipoEquipo == 'Servidor' %}
+										{{ include('equipo/_planillas/_servidor.html.twig') }}
+									{% endif %}
+								</thead>
+							</table>
+
+							{% if tipoEquipo in ['Computadora de Escritorio', 'Notebook', 'Servidor'] %}
+								{{ include('equipo/_planillas/_bloque_sistema_operativo.html.twig', {'equipo': equipo}) }}
+							{% endif %}
+
+							{% if tipoEquipo in ['DVR', 'Reloj Biométrico', 'Cámara'] %}
+								{{ include('equipo/_planillas/_bloque_acceso.html.twig', {'equipo': equipo}) }}
+							{% endif %}
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% else %}
+	<h3 class="h5 mb-0 text-danger mt-3 pb-3 mx-5">No tiene planilla...</h3>
+{% endif %}

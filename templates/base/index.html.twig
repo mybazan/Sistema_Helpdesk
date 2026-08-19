@@ -1,0 +1,136 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {% set currentPath = app.request.get('_route') %}
+        {% set opcionesAdministracion = ["app_admin_users", "index_roles", "ubicacion_index", "tipo_equipo_index", "personal_index", "pedido_estado_index"] %}
+        {% set opcionesEquipo = ["index_equipo"] %}
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark" id="accordionSidebar">
+            <div class="container-fluid m-0 p-0 ">
+                {# Side Menú #}
+                {% include 'base/side-menu.html.twig' %}
+                <hr class="sidebar-divider my-2">
+                <!-- Sidebar Toggler (Sidebar) -->
+                <li class="nav-item text-center">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </li>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {# Top Menú #}
+                {% include 'base/top-menu.html.twig' %}
+
+                <div class="container-fluid">
+                    {# Heading Main #}
+                    {{ include('base/_flash.html.twig') }}
+                    {% block headerMain %}
+                        
+                    {% endblock %}
+
+                    {# Content Main #}
+                    <div class="row">
+                        {% block rowMain %}
+                        {% endblock %}
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>&copy; {{ "now"|date("Y") }} &nbsp; {{ site_name }}</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">¿Está seguro que desea cerrar sesión?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+                    <a class="btn btn-primary" href="{{ path('app_logout') }}">Si</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block javascripts %}
+        <!-- Bootstrap core JavaScript-->
+        <script src="{{ asset('base/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('base/vendor/bootstrap/js/bootstrap-datepicker.min.js')}}"></script>
+        <!-- Core plugin JavaScript-->
+        
+        <!-- Custom scripts for all pages-->
+        <script src="{{ asset('base/js/sb-admin-2.min.js') }}"></script>
+        
+        <script>
+            /* Custom calendar for Bootstrap */
+            $('#calendar').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: "dd-mm-yyyy",
+            });
+
+            /* Select2 */
+            $(document).ready(function() {
+                $('.select2').select2({
+                    theme: 'default',
+                    width: '100%',
+                    allowClear: false,
+                    language: {
+                        noResults: function() {
+                            return "No se encontraron resultados.";
+                        }
+                    }
+                });
+            });
+        </script>
+    {% endblock javascripts %}
+
+    {% block modal_content %}{% endblock modal_content %}
+
+    <script>
+        function disableSubmitButton() {
+            var submitButton = document.getElementById('submit-button');
+            submitButton.setAttribute('disabled', 'disabled');
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+            return true;
+        }
+
+        function disableButtonAfterSubmit(button) {
+            button.form.addEventListener('submit', function () {
+                button.setAttribute('disabled', 'disabled');
+                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+            });
+        }
+    </script>
+
+{% endblock %}

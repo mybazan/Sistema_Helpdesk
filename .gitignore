@@ -1,0 +1,97 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.localpro.php
+/.env
+/.env.dev
+/.env.test
+/.env.prod
+.env.local
+.env.local.php
+.env.localpro.php
+.env.dev
+.env.test
+.env.prod
+.env
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/public/uploads/
+/imagenes/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+/public/images
+###> liip/imagine-bundle ###
+/public/media/cache/
+/public/uploads/ficha/
+/public/uploads/firma/
+###< liip/imagine-bundle ###
+###> phpstorm project files
+/.idea/
+
+
+# CUSTOM
+## .env
+/public/base/node_modules
+/public/base/vendor
+/public/base/package-lock.json
+/public/base/css/sb-admin-2.css
+/public/base/css/sb-admin-2.min.css
+/public/.htaccess
+/public/error_log
+/templates/componente_movimiento/_modal_movimiento_elemento.html.twig
+composer.lock
+symfony.lock
+error_log
+docker-compose.override.yml
+docker-compose.yml
+package-lock.json
+##/config/bundles.php
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+node_modules
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+
+###> base de datos ###
+juslariojagov_sidi.sql
+juslariojagov_sidi.zip
+.vscode/settings.json
+start
+
+###> Cosas lucas ###
+/src/Entity/MigrationVersions.php
+/seeds/1_roles.sql
+/seeds/2_tecnicos_soporte.sql
+/seeds/3_usuarios.sql
+/seeds/4_caracteristicas.sql
+/seeds/5_caracteristicas_tipo_equipo.sql
+/seeds/6_ubicaciones.sql
+/seeds/7_equipos.sql
+/seeds/8_pedidos.sql
+/seeds/9_pedidos_estados.sql
+/seeds/10_pedidos_historial_estados.sql
+/seeds/11_pedidos_tecnicos_asignados.sql
+/seeds/12_permisos.sql
+/seeds/13_personal.sql
+/seeds/14_tipo_componentes.sql
+/seeds/15_tipo_equipos.sql
+/seeds/16_usuarios_equipos.sql
+/seeds/17_pedidos_tecnicos_asignados.sql
+/seeds/18_pedidos_estados.sql
+/seeds/19_pedidos_historial_estados.sql
+/seeds/20_pedidos_tecnicos_asignados.sql
+/seeds/21_pedidos_estados.sql
+/seeds/22_pedidos_historial_estados.sql
+/seeds/23_pedidos_tecnicos_asignados.sql
+/seeds/1_dummy_data.sql
+/seeds/3_coordinador_soporte.sql
+
+/sistema_soporte.sql

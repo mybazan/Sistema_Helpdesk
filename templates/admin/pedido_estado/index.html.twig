@@ -1,0 +1,77 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Estados de Ticket{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-dark"><b>Estados de Ticket</b></h1>
+        {% if is_granted('TICKET_ASIGNAR') %}
+            <div class="align-items-center justify-content-end">
+                <a href="{{ path('pedido_estado_new') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fa fa-plus"></i> &nbsp; Nuevo Estado
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+        {{ include('admin/pedido_estado/_filtro.html.twig', {'form': formFiltros}) }}
+
+        <div class="table-responsive mt-3">
+            <table class="display table table-hover">
+                <thead>
+                    <th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="40%">
+                        <div>
+                            {{ knp_pagination_sortable(pagination, 'Estado', 'p.nombre') }}
+                        </div>
+                    </th>
+                    <th scope="col" class="font-weight-semi-bold py-2 text-center" style="cursor: auto;">
+                        {{ knp_pagination_sortable(pagination, 'Activo', 'p.isActive') }}
+                    </th>
+                    <th scope="col" class="font-weight-semi-bold py-2 text-center" style="cursor: auto;" width="160">
+                        Acciones
+                    </th>
+                </thead>
+                <tbody>
+                    {% for estado in pagination %}
+                        <tr>
+                            <td class="align-middle">{{ estado.nombre }}</td>
+                            <td class="align-middle text-center">
+                                {% if estado.isActive %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle text-center">
+                                {% if is_granted('TICKET_ASIGNAR') %}
+                                    <a href="{{ path('pedido_estado_edit', {'id': estado.id}) }}" class="btn btn-sm btn-primary" title="Editar">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a href="{{ path('pedido_estado_toggle', {'id': estado.id}) }}" class="btn btn-sm btn-outline-primary" title="Activar/Desactivar">
+                                        <i class="fas fa-toggle-{{ estado.isActive ? 'on' : 'off' }}"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row justify-content-between m-0 w-100 mt-2">
+            <div class="col-4">
+                <div class="d-flex mb-2 mb-md-0 d-inline-flex">
+                    {{ pagination.getTotalItemCount }} {{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }} en total
+                </div>
+            </div>
+            <div class="col-4 text-end">
+                <div class="d-inline-flex align-items-end">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

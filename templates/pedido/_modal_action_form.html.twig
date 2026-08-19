@@ -1,0 +1,440 @@
+<div class="modal fade" id="modalAction{{pedido.id}}" aria-hidden="true" aria-labelledby="modalActionLabel" tabindex="-1">
+  {% set estadoActual = pedido.estadoActualNombre %}
+  {% set puedeGestionar = pedido.tecnicoAsignado == usuario or is_granted('TICKET_ASIGNAR') %}
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalActionLabel">Acciones sobre el Ticket Nº{{ pedido.id }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Qué acción desea realizar sobre el ticket de soporte Nº{{ pedido.id }}?</p>
+      </div>
+      <div class="modal-footer justify-content-md-center">
+        <span>
+          <button class="btn btn-primary" onClick="window.location='{{ path('ticket_show', {'id': pedido.id}) }}'"><i class="far fa-eye me-2"></i>Ver Detalles</button> 
+          {% if is_granted('TICKET_EDITAR') and (is_granted('TICKET_ASIGNAR') or not app.user.isTecnico) and estadoActual != 'Finalizado' %}
+              <button class="btn btn-primary" onClick="window.location='{{ path('ticket_edit', {'id': pedido.id}) }}'"><i class="fas fa-pen me-2"></i>
+                Editar
+              </button>
+          {% endif %}
+
+          {% if is_granted('TICKET_ELIMINAR') and estadoActual in ['Recibido', 'Desestimado'] %}
+            <button class="btn btn-primary" data-bs-target="#modalActionDelete{{pedido.id}}" data-bs-toggle="modal"><i class="fa fa-trash me-2"></i>Eliminar</button>
+          {% endif %}
+        </span>
+        <hr>
+        
+        <span class="text-center">
+          {% if is_granted('TICKET_EDITAR') and estadoActual is not null %}
+
+            {% if estadoActual == "Recibido" and is_granted('TICKET_ASIGNAR') %}
+              <button class="btn btn-primary" data-bs-target="#modalActionDesestimar{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-archive me-2"></i>Desestimar</button>
+            {% endif %}
+
+            {% if estadoActual != "Demorado" and estadoActual != "Finalizado" and estadoActual != "Desestimado" and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalActionDemorar{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hourglass-half me-2"></i>Demorar</button>
+            {% endif %}
+
+            {% if estadoActual == "Demorado" and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalActionQuitarDemora{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-undo me-2"></i>Continuar</button>
+            {% endif %}
+
+            {% if estadoActual == "Recibido" and is_granted('TICKET_ASIGNAR') %}
+              <button class="btn btn-primary" data-bs-target="#modalAsignar{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hands-helping me-2"></i>Asignar</button>
+            {% endif %}
+
+            {% if estadoActual in ["Asignado", "Pendiente", "En Proceso"] and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalEquipo{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-users-cog me-2"></i>Equipo</button>
+            {% endif %}
+
+            {% if ( estadoActual == "Pendiente" or estadoActual == "Asignado" ) and pedido.tecnicoAsignado is not null and is_granted('TICKET_ASIGNAR') %}
+              <button class="btn btn-primary" data-bs-target="#modalAsignar{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hands-helping me-2"></i>Reasignar</button>
+            {% endif %}
+
+            {% if ( estadoActual == "Pendiente" or estadoActual == "Asignado" ) and puedeGestionar %}
+              <button class="btn btn-primary {{ is_granted('TICKET_ASIGNAR') and pedido.tecnicoAsignado == usuario ? 'mt-2' }}" data-bs-target="#modalEnProceso{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hammer me-2"></i>En Proceso</button>
+            {% endif %}
+
+            {% if ( estadoActual == "Asignado" or estadoActual == "En Proceso" ) and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalPendiente{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-pause me-2"></i>Pendiente</button>
+            {% endif %}
+
+            {% if estadoActual == "En Proceso" and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalResuelto{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hammer me-2"></i>Resolver</button>
+            {% endif %}
+
+            {% if estadoActual == "Resuelto" and puedeGestionar %}
+              <button class="btn btn-primary" data-bs-target="#modalFinalizado{{pedido.id}}" data-bs-toggle="modal"><i class="fas fa-hammer me-2"></i>Finalizar</button>
+            {% endif %}
+
+          {% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# MODAL ELIMINAR #}
+{% if is_granted('TICKET_ELIMINAR') %}
+  <div class="modal fade" id="modalActionDelete{{pedido.id}}" aria-hidden="true" aria-labelledby="modalActionDeleteLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalActionDeleteLabel">Eliminar Ticket Nº{{ pedido.id }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Está por eliminar el <b>ticket de soporte Nº{{ pedido.id }}</b>.<br></p>
+          <p><i class="fas fa-info-circle me-2 text-primary"></i>Esta acción no podrá realizarse si el mismo se encuentra en tratamiento o finalizado.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#modalAction{{pedido.id}}" data-bs-toggle="modal">Volver</button>
+            <button class="btn btn-danger" type="submit" onClick="window.location='{{ path('ticket_delete', {'id': pedido.id}) }}'"><i class="fa fa-trash me-2"></i>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL DESESTIMAR #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalActionDesestimar{{pedido.id}}" aria-hidden="true" aria-labelledby="modalActionDesestimarLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalActionDesestimarLabel">Desestimar Ticket Nº{{ pedido.id }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Esta por desestimar el <b>ticket de soporte Nº{{ pedido.id }}</b>.<br>
+            Esta acción corresponde aplicar cuando el ticket generado no corresponde ser tratado por el área de soporte técnico.
+          </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#modalAction{{pedido.id}}" data-bs-toggle="modal">Volver</button>
+            <button class="btn btn-danger" data-bs-target="#modalDesestimar{{pedido.id}}" data-bs-toggle="modal">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL DESESTIMAR - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalDesestimar{{pedido.id}}" tabindex="-1" aria-labelledby="modalDesestimarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'desestimar'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalDesestimarLabel">Desestimar Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionDesestimar" placeholder="Ingresar una anotación para el estado...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL DEMORAR #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalActionDemorar{{pedido.id}}" aria-hidden="true" aria-labelledby="modalActionDemorarLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalActionDemorarLabel">Demorar Ticket Nº{{ pedido.id }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Esta por demorar el <b>ticket de soporte Nº{{ pedido.id }}</b>.<br>
+            Esta acción corresponde aplicar cuando el ticket generado se encuentra retrasado por algún caso en particular.
+          </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#modalAction{{pedido.id}}" data-bs-toggle="modal">Volver</button>
+            <button class="btn btn-danger" data-bs-target="#modalDemorar{{pedido.id}}" data-bs-toggle="modal">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL DEMORAR - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalDemorar{{pedido.id}}" tabindex="-1" aria-labelledby="modalDemorarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'demorar'} ) }}" method="post" enctype="multipart/form-data">
+
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalDemorarLabel">Demorar Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionDemorar" placeholder="Ingresar una anotación para el estado...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL ASIGNAR - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalAsignar{{pedido.id}}" tabindex="-1" aria-labelledby="modalAsignarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'asignar'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalAsignarLabel">{{ pedido.tecnicoAsignado is null ? 'Asignar ' : 'Reasignar ' }}Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% if pedido.tecnicoAsignado is not null %}
+              <div class="mb-3">
+                Esta por reasignar el <b>ticket de soporte Nº{{ pedido.id }}</b>.<br>
+                Esta acción corresponde aplicar cuando el ticket tendrá otro encargado.
+              </div>
+            {% endif %}
+            <div class="mb-3">
+              <select class="form-select" aria-label="Default select example" name="inputTecnico">
+                {% set opciones = tecnicos | filter(item => item != pedido.tecnicoAsignado) %}
+                {% for asignadoEquipo in pedido.pedidoTecnicoAsignados %}
+                  {% if asignadoEquipo.esOperativo == true %}
+                    {% set opciones = opciones | filter(item => item != asignadoEquipo.tecnicoAsignado) %}
+                  {% endif %}
+                {% endfor %}
+                {% if opciones %}
+                  <option selected>Seleccionar un encargado.</option>
+                  {% for tecnico in opciones %}
+                    <option value={{tecnico.id}}>{{ tecnico.apellido~", "~tecnico.nombre }}</option>
+                  {% endfor %}
+                {% else %}
+                  <option selected>No hay técnicos disponibles.</option>
+                {% endif %}
+              </select>
+            </div>
+            {% if pedido.tecnicoAsignado is null %}
+              <div class="mb-3">
+                <label for="inputObservacion" class="form-label">Observación</label>
+                <input type="text" class="form-control" id="inputObservacion" name="inputObservacionAsignar" placeholder="Ingresar una anotación para el estado...">
+              </div>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL PENDIENTE - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') and (pedido.tecnicoAsignado == usuario or is_granted('TICKET_ASIGNAR')) %}
+  <div class="modal fade" id="modalPendiente{{pedido.id}}" tabindex="-1" aria-labelledby="modalPendienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'pendiente'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalPendienteLabel">Retrasar Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionPendiente" placeholder="Ingresar una anotación para el estado...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL EN PROCESO - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') and (pedido.tecnicoAsignado == usuario or is_granted('TICKET_ASIGNAR')) %}
+  <div class="modal fade" id="modalEnProceso{{pedido.id}}" tabindex="-1" aria-labelledby="modalEnProcesoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'procesando'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalEnProcesoLabel">Procesar Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionEnProceso" placeholder="Ingresar una anotación para el estado...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+{# MODAL RESUELTO - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') and (pedido.tecnicoAsignado == usuario or is_granted('TICKET_ASIGNAR')) %}
+  <div class="modal fade" id="modalResuelto{{pedido.id}}" tabindex="-1" aria-labelledby="modalEnResueltoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'resuelto'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalResueltoLabel">Resolver Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionResuelto" placeholder="Ingresar una anotación para el estado...">
+            </div>
+            <div class="mb-3">
+          <label for="inputSolucion" class="form-label">Solución</label>
+          <input type="text" class="form-control" id="inputSolucion" name="inputSolucion" placeholder="Ingresar una anotación como solución..." required>
+          <div class="alert alert-info mt-3" role="alert">
+          La información que se guarde en este campo se asignará a la nota de Resolución Final del pedido.
+        </div>
+            <div class="mb-3">
+              <label for="formFile" class="form-label">Adjuntar (Formato PDF)</label>
+              <input class="form-control" id="formFile" name="inputAdjuntarSolucion" type="file" name="pdf" accept=".pdf" max="20971520"/>
+            </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+            </div>
+      </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL FINALIZADO - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') and (pedido.tecnicoAsignado == usuario or is_granted('TICKET_ASIGNAR')) %}
+  <div class="modal fade" id="modalFinalizado{{pedido.id}}" tabindex="-1" aria-labelledby="modalFinalizadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'finalizado'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalFinalizadoLabel">Resolver Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="inputObservacion" class="form-label">Observación</label>
+              <input type="text" class="form-control" id="inputObservacion" name="inputObservacionFinalizado" placeholder="Ingresar una anotación para el estado...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL QUITAR DEMORA - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalActionQuitarDemora{{pedido.id}}" tabindex="-1" aria-labelledby="modalQuitarDemoraLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_estado', {'id': pedido.id, 'accion': 'recursar'}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalQuitarDemoraLabel">Continuar con Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p>
+                Esta por quitar la marca de demora del <b>ticket de soporte Nº{{ pedido.id }}</b>.<br>
+                Esta acción corresponde aplicar cuando el ticket generado ya no se encuentra en estado demorado.
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{# MODAL EQUIPO - FORMULARIO #}
+{% if is_granted('TICKET_EDITAR') %}
+  <div class="modal fade" id="modalEquipo{{pedido.id}}" tabindex="-1" aria-labelledby="modalEquipoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{{ path('ticket_edit_equipo', {'id': pedido.id}) }}" method="post" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalEquipoLabel">Equipo de Trabajo para Ticket Nº{{ pedido.id }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              Esta por {{ pedido.pedidoTecnicoAsignados is empty ? 'asignar' : 'reasignar' }} un equipo al <b>ticket de soporte Nº{{ pedido.id }}</b>.<br>
+              Esta acción corresponde aplicar cuando el ticket tendrá un equipo de trabajo.<br>
+            </div>
+            <div class="mb-3 ms-3">
+              {% for tecnico in tecnicos %}
+                {% if tecnico != pedido.tecnicoAsignado %}
+                  <div class="form-check-{{ tecnico.id }}">
+                    <input class="form-check-input" name="check{{ tecnico.id }}" type="checkbox" value={{ tecnico.id }} id="flexCheck{{ tecnico.id }}" 
+                      {% for asignadoEquipo in pedido.pedidoTecnicoAsignados %}
+                        {% if tecnico == asignadoEquipo.tecnicoAsignado and asignadoEquipo.esOperativo %}
+                          checked
+                        {% endif %}
+                      {% endfor %}
+                    >
+                    <label class="form-check-label" for="flexCheck{{ tecnico.id }}">
+                      {{ tecnico.apellido~", "~tecnico.nombre }}
+                    </label>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancelar</button>
+            <button type="submit" class="btn btn-primary" onclick="disableButtonAfterSubmit(this);">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}

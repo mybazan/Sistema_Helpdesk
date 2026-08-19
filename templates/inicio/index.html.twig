@@ -1,0 +1,132 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Inicio
+{% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h3 mb-0 text-dark">
+			<b>Bienvenido</b>
+		</h1>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+	{% if is_granted('TICKET_VER') %}
+		<div class="row mb-4">
+			<div class="col-md-6 col-xl-3 mb-3">
+				<div class="card border-left-primary shadow h-100 py-2">
+					<div class="card-body">
+						<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tickets activos</div>
+						<div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalActivos }}</div>
+					</div>
+				</div>
+			</div>
+			{% if is_granted('TICKET_ASIGNAR') %}
+				<div class="col-md-6 col-xl-3 mb-3">
+					<div class="card border-left-warning shadow h-100 py-2">
+						<div class="card-body">
+							<div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sin asignar</div>
+							<div class="h5 mb-0 font-weight-bold text-gray-800">{{ sinAsignar }}</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+			<div class="col-md-6 col-xl-3 mb-3">
+				<div class="card border-left-danger shadow h-100 py-2">
+					<div class="card-body">
+						<div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Demorados</div>
+						<div class="h5 mb-0 font-weight-bold text-gray-800">{{ conteoEstados['Demorado']|default(0) }}</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-xl-3 mb-3">
+				<div class="card border-left-success shadow h-100 py-2">
+					<div class="card-body">
+						<div class="text-xs font-weight-bold text-success text-uppercase mb-1">En proceso</div>
+						<div class="h5 mb-0 font-weight-bold text-gray-800">{{ conteoEstados['En Proceso']|default(0) }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="row">
+		{% if is_granted('TICKET_VER') %}
+			<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+				<a href="{{path("ticket_index")}}" style="text-decoration:none;" class="card flex-row align-items-center p-3 p-md-4 text-secondary">
+					<i class="fas fa-receipt"></i>
+					<div class="ms-2">
+						<h6 class="mb-0">
+							<b>VER TICKETS</b>
+						</h6>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+
+		{% if is_granted('TICKET_CREAR') %}
+			<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+				<a href="{{path("ticket_new")}}" style="text-decoration:none;" class="card flex-row align-items-center p-3 p-md-4 text-secondary">
+					<i class="fas fa-plus-circle"></i>
+					<div class="ms-2">
+						<h6 class="mb-0">
+							<b>NUEVO TICKET</b>
+						</h6>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+
+		{% if is_granted('EQUIPO_VER') %}
+			<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+				<a href="{{path("index_equipo")}}" style="text-decoration:none;" class="card flex-row align-items-center p-3 p-md-4 text-secondary">
+					<i class="fas fa-desktop"></i>
+					<div class="ms-2">
+						<h6 class="mb-0">
+							<b>VER EQUIPOS</b>
+						</h6>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+
+		{% if is_granted('USERS_CREAR') %}
+			<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+				<a href="{{path("app_admin_new_user")}}" style="text-decoration:none;" class="card flex-row align-items-center p-3 p-md-4 text-secondary">
+					<i class="fas fa-user-plus"></i>
+					<div class="ms-2">
+						<h6 class="mb-0">
+							<b>AGREGAR USUARIO</b>
+						</h6>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+
+		{% if is_granted('ROLES_CREAR') %}
+			<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+				<a href="{{path("new_role")}}" style="text-decoration:none;" class="card flex-row align-items-center p-3 p-md-4 text-secondary">
+					<i class="fas fa-key"></i>
+					<div class="ms-2">
+						<h6 class="mb-0">
+							<b>AGREGAR ROL</b>
+						</h6>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+
+		<div class="quick-access col-md-6 col-xl-4 mb-3 mb-xl-4">
+			<a href="{{path("inicio_ayuda")}}" style="text-decoration:none;" class="btn-inicio card flex-row align-items-center p-3 p-md-4 text-secondary">
+				<i class="fas fa-question"></i>
+				<div class="ms-2">
+					<h6 class="mb-0">
+						<b>AYUDA</b>
+					</h6>
+				</div>
+			</a>
+		</div>
+	</div>
+
+{% endblock %}

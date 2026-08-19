@@ -1,0 +1,33 @@
+{{ form_start(form) }}
+{{ include('equipo/_form/_form_planilla.html.twig', { form: form }) }}
+
+{# Campos específicos de Impresora #}
+	<div class="col mb-1">
+		{{ form_label(form.toner) }}
+		{{ form_widget(form.toner) }}
+	</div>
+	<div class="col mb-1">
+		{{ form_label(form.drum) }}
+		{{ form_widget(form.drum) }}
+	</div>
+
+<div class="col mb-1">
+	{{ form_label(form.ups) }}
+	{{ form_widget(form.ups) }}
+</div>
+
+<div class="col mb-1">
+	{{ form_label(form.red) }}
+	{{ form_widget(form.red) }}
+</div>
+
+<div class="col mb-1">
+	{{ form_label(form.observacion) }}
+	{{ form_widget(form.observacion) }}
+</div>
+
+
+<p class="mt-3 fw-light">Los campos marcados con * deben ser completados.</p>
+<hr>
+<button class="btn btn-sm float-end btn-outline-primary">Guardar</button>
+{{ form_end(form) }}

@@ -1,0 +1,55 @@
+{% extends 'base/index-alone.html.twig' %}
+
+{% block title %}{{ site_name }}{% endblock %}
+
+{% block contenido %}
+	<style>
+		.quick-access:hover {
+			transform: scale(1.04);
+			transition: transform 0.2s ease;
+		}
+	</style>
+
+	<div class="container">
+		<div class="row justify-content-center h-100">
+			<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+				<div class="text-center mt-0 mb-3" >
+					<a href="{{ path('inicio_index') }}">
+						<img class="quick-access" src="{{ asset('base/img/logo.png') }}" alt="logo" width="75">
+					</a>
+				</div>
+				<div class="card shadow-lg">
+					<div class="card-footer py-2 pt-3 border-0 text-center">
+						<h1 class="fs-4 text-dark">Sistema de Soporte</h1>
+					</div>
+					<div class="card-body p-5 pb-2 pt-2">
+						<h1 class="fs-5 card-title fw-bold mb-3 mt-2">Iniciar sesión</h1>
+						<form method="post">
+							<div class="mb-3">
+								<input type="text" class="form-control inputLoggin" name="username" id="inputText" placeholder="Usuario" required autofocus>
+							</div>
+							<div class="mb-0">
+								<input type="password" name="password" id="inputPassword" class="form-control inputLoggin" placeholder="Contraseña" required>
+								<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								
+							</div>
+							<div class="w-100 my-3">
+								<button type="submit" class="btn btn-primary submit inputLoggin w-100" id="btnIngresar">
+									Ingresar
+								</button>
+							</div>
+						</form>
+					</div>
+					{% if error %}
+						<div class="alert alert-danger mx-5 text-center">{{ error }}</div>
+					{% endif %}
+					<div class="card-footer py-1 border-0">
+						<div class="text-center text-muted">
+							Gestión de tickets e inventario técnico
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

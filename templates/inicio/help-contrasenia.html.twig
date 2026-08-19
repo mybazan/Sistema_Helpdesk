@@ -1,0 +1,55 @@
+<div class="accordion accordion-flush mt-2" id="accordionFlushThree">
+  {% if is_granted('VER_INICIO') %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-contraseniaCollapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        ¿Cómo cambiar la contraseña de mi cuenta con la sesión iniciada?
+      </button>
+    </h2>
+    <div id="flush-contraseniaCollapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushThree">
+      <div class="accordion-body">
+        Para acceder al formulario que permite cambiar la contraseña del usuario, 
+        debe ir a la parte superior derecha y accionar sobre el nombre y apellido
+        que pertenece a la cuenta, luego en el panel flotante escoger la opción 
+        <code><i class="fas fa-exchange-alt mx-1"></i>Cambiar contraseña</code>.<br><br>
+        Dentro del formulario deberá completar los tres campos obligatorios para
+        poder actualizar su contraseña y, para finalizar el proceso deberá accionar
+        el botón <strong>Guardar</strong>.<br><br>
+        Si el proceso finalizó correctamente, el sistema mostrará el mensaje
+        "<strong>Contraseña actualizada correctamente.</strong>" en un recuadro
+        de color verde.
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-contraseniaCollapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+        ¿Cómo recuperar la contraseña de una cuenta?
+      </button>
+    </h2>
+    <div id="flush-contraseniaCollapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushThree">
+      <div class="accordion-body">
+        Para recuperar la contraseña de una cuenta, deberá acceder al apartado
+        de inicio de sesión del sistema, luego deberá accionar el texto <code>¿Olvidó su contraseña?</code>.
+        En la sección para recuperar la contraseña, deberá completar el campo Correo Electrónico que es 
+        obligatorio para finalizar el proceso. El correo ingresado debe estar asociado a la cuenta que desea recuperar.<br>
+        Si el correo ingresado es válido, el sistema enviará un mail a esa cuenta. El mismo contendrá
+        un enlace al sistema en el que tendrá que ingresar su nueva contraseña.<br>
+        El correo electrónico puede ingresar a la casilla de mensajes como correo no deseado.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingThree">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-contraseniaCollapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+        ¿A qué hace referencia el simbolo asterisco (*) en un campo?
+      </button>
+    </h2>
+    <div id="flush-contraseniaCollapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushThree">
+      <div class="accordion-body">
+        El símbolo asterisco (*) sobre un campo <strong>significa que el mismo es obligatorio</strong>. Esto quiere decir que para finalizar el proceso es necesario que el campo marcado con un asterisco debe estar rellenado con el dato necesario.
+      </div>
+    </div>
+  </div>
+</div>

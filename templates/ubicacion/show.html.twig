@@ -1,0 +1,63 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}{{ ubicacion.nombre }}{% endblock %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>{{ ubicacion.nombre }}</b></h1>
+        <div>
+            {% if is_granted('UBICACION_EDITAR') %}
+                <a href="{{ path('ubicacion_edit', {'id': ubicacion.id}) }}" class="btn btn-sm btn-primary shadow-sm">
+                    <i class="fa fa-edit"></i> &nbsp; Editar
+                </a>
+            {% endif %}
+            <a href="{{ path('ubicacion_index') }}" class="btn btn-sm btn-primary shadow-sm">
+                <i class="fa fa-reply"></i> &nbsp; Volver al listado
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="180" class="text-end">Nombre:</th>
+                        <td>{{ ubicacion.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Nomenclatura:</th>
+                        <td>{{ ubicacion.nomenclatura }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Estado:</th>
+                        <td>{{ ubicacion.estadoLabel }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Equipos asociados:</th>
+                        <td>{{ ubicacion.equipos|length }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Personal asociado:</th>
+                        <td>{{ personalCount }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Tickets asociados:</th>
+                        <td>{{ pedidoCount }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        {% if puedeEliminar and is_granted('UBICACION_ELIMINAR') %}
+            <form method="post" action="{{ path('ubicacion_delete', {'id': ubicacion.id}) }}" onsubmit="return confirm('¿Eliminar esta ubicación?');" class="mt-3">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ubicacion.id) }}">
+                <button class="btn btn-sm btn-danger">Eliminar ubicación</button>
+            </form>
+        {% elseif is_granted('UBICACION_ELIMINAR') %}
+            <p class="text-muted mt-3 mb-0"><i class="fas fa-info-circle me-1"></i>No se puede eliminar porque tiene registros asociados.</p>
+        {% endif %}
+    </div>
+{% endblock %}

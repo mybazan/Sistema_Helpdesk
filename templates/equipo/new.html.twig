@@ -1,0 +1,41 @@
+{% extends "base/index.html.twig" %}
+
+{% block title %}Equipos{% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h4 mb-0 text-dark">
+			<b>
+				{% if currentPath == 'new_equipo' %}
+					Nuevo Equipo
+				{% else %}
+					Editar Equipo: {{ equipo.nombre }}
+				{% endif %}
+			</b>
+		</h1>
+		<div class="align-items-center justify-content-end">
+			{% if currentPath == 'new_equipo' %}
+				<a href="{{ path('index_equipo') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+					<i class="fa fa-reply"></i>
+					&nbsp; Volver al listado
+				</a>
+			{% elseif currentPath == 'edit_equipo' %}
+			<a href="{{ referrer is not empty ? referrer : path('show_equipo', { 'id': equipo.id }) }}"  class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+				<i class="fa fa-reply"></i>
+					&nbsp; Volver
+				</a>
+			{% endif %}
+
+		</div>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+	<div class="col">
+		<div class="card">
+			<div class="card-body">
+				{{ include('equipo/_form/_form.html.twig') }}
+			</div>
+		</div>
+	</div>
+{% endblock rowMain %}

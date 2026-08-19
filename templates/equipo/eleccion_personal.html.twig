@@ -1,0 +1,143 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Estación de Trabajo
+{% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between">
+		<h1 class="h3 mb-0 text-dark">
+			<b>Traspasar el equipo a:</b>
+		</h1>
+
+	</div>
+	<div class="d-flex justify-content-end mb-3">
+		{% if is_granted('PERSONAL_CREAR') %}
+			<a href="{{ path('personal_new', {'id': estacionTraspaso }) }}" class="btn btn-sm btn-primary shadow-sm me-2">
+				<i class="fa fa-plus"></i>
+				&nbsp; Nuevo Personal
+			</a>
+		{% endif %}
+		<a href="{{ path('show_equipo', {'id': estacionTraspaso}) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+			<i class="fa fa-reply"></i>
+			&nbsp; Volver al Equipo
+		</a>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+	<div class="col">
+
+		{{ include('personal/_filtro.html.twig', {'form': formFiltro}) }}
+		<div class="table-responsive mt-3">
+			<table
+				class="display table table-hover">
+				{# Títulos de tabla #}
+				<thead>
+					{# DIRECCION #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							#
+						</div>
+					</th>
+					{# APELLIDO #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;" width="20%">
+						<div>
+							{{ knp_pagination_sortable(pagination, 'Nombre', 'c.apellido') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.apellido' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.apellido' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# DNI #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							{{ knp_pagination_sortable(pagination, 'Dni', 'c.dni') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.dni' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.dni' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# EMAIL #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							{{ knp_pagination_sortable(pagination, 'Email', 'c.email') }}
+							&nbsp;
+							{% if pagination.getSort == 'c.email' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'c.email' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% endif %}
+						</div>
+					</th>
+					{# REPARTICION #}
+					<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+						<div class="text-center">
+							{{ knp_pagination_sortable(pagination, 'Ubicación', 'u.nomenclatura') }}
+							&nbsp;
+							{% if pagination.getSort == 'u.nomenclatura' and pagination.getDirection == 'asc' %}
+								<i class="fas fa-caret-up"></i>
+							{% elseif pagination.getSort == 'u.nomenclatura' and pagination.getDirection == 'desc' %}
+								<i class="fas fa-caret-down"></i>
+							{% endif %}
+						</div>
+					</th>
+				</thead>
+				{# END Títulos de tabla #}
+
+				{# Contenido de tabla #}
+				<tbody>
+					{% for personal in pagination %}
+						<tr>
+							{% set isVinculado = usuariosVinculados|filter(user => user.usuario.id == personal.id)|length > 0 %}
+							<td class="align-middle text-center td-cursor cursorPointer">
+								{% if isVinculado %}
+									<button class="btn btn-sm btn-success" disabled="true">Agregado</button>
+								{% else %}
+									<button class="btn btn-sm btn-primary" data-bs-target="#modalActionTraspaso{{ personal.id }}" data-bs-toggle="modal">Traspasar</button>
+								{% endif %}
+							</td>
+
+							<td class="align-middle td-cursor cursorPointer">{{ personal.apellido ~ ', ' ~ personal.nombre }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">{{ personal.dni }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">{{ personal.email }}</td>
+							<td class="align-middle text-center td-cursor cursorPointer">{{ personal.ubicacion ? personal.ubicacion.nomenclatura : "-" }}</td>
+						</tr>
+					{% endfor %}
+
+				</tbody>
+
+				{# END Contenido de tabla #}
+			</table>
+		</div>
+
+		{# Paginación #}
+		<div class="row justify-content-between m-0 w-100 mt-2">
+			<div class="col-4">
+				<div class="d-flex mb-2 mb-md-0 d-inline-flex">
+					{{ pagination.getTotalItemCount }}
+					{{ pagination.getTotalItemCount == 1 ? " registro" : " registros" }}
+					en total
+				</div>
+			</div>
+			<div class="col-4 text-end">
+				<div class="d-inline-flex align-items-end">
+					{{ knp_pagination_render(pagination) }}
+				</div>
+			</div>
+		</div>
+		{# END Paginación #}
+
+	</div>
+{% endblock %}
+
+{% block modal_content %}
+	{% for personal in pagination %}
+		{{ include('personal/_modal_action_form.html.twig', { 'personal': personal } ) }}
+	{% endfor %}
+{% endblock modal_content %}

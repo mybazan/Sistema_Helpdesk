@@ -1,0 +1,132 @@
+<div class="modal fade" id="modalAction{{personal.id}}" aria-hidden="true" aria-labelledby="modalActionLabel" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="modalActionLabel">Acciones sobre
+					{{ personal.apellido ~ ', ' ~  personal.nombre }}</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>¿Qué acción desea realizar sobre el personal '{{ personal.apellido ~ ', ' ~ personal.nombre}}'?</p>
+
+
+			</div>
+			<div class="modal-footer justify-content-md-center">
+				<div>
+					{% if is_granted('PERSONAL_VER') %}
+						<button class="btn btn-primary" onclick="window.location='{{ path('personal_show', {'id': personal.id}) }}'">
+							<i class="fas fa-eye me-2"></i>Ver</button>
+					{% endif %}
+					{% if is_granted('PERSONAL_EDITAR') %}
+						<button class="btn btn-primary" onclick="window.location='{{ path('personal_edit', {'id': personal.id}) }}'">
+							<i class="fas fa-pen me-2"></i>Editar</button>
+					{% endif %}
+					{% if is_granted('PERSONAL_ELIMINAR') %}
+						<button class="btn btn-primary" data-bs-target="#modalActionDelete{{personal.id}}" data-bs-toggle="modal">
+							<i class="fa fa-trash me-2"></i>Eliminar</button>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{# MODAL ELIMINAR #}
+{% if is_granted('PERSONAL_ELIMINAR') %}
+	<div class="modal fade" id="modalActionDelete{{personal.id}}" aria-hidden="true" aria-labelledby="modalActionDeleteLabel" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="modalActionDeleteLabel">Eliminar '{{ personal.apellido ~ ', ' ~ personal.nombre }}'</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>Está por eliminar el registro
+						<b>{{ personal.apellido ~ ', ' ~ personal.nombre }}</b>.<br></p>
+					<p>
+						<i class="fas fa-info-circle me-2 text-primary"></i>Esta acción no podrá realizarse si el mismo es utilizado en otro registro. Para ese caso utilizar la función desactivar.</p>
+				</div>
+				<div class="modal-footer">
+					<form class="spaceEven w-100" method="post" action="{{ path('personal_delete', {'id': personal.id}) }}">
+						<input type="hidden" name="_method" value="DELETE">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ personal.id) }}">
+
+						<button class="btn btn-danger" type="submit">
+							<i class="fas fa-trash me-2"></i>&nbsp
+								              Continuar
+						</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							<i class="fas fa-redo"></i>&nbsp
+								              Cancelar
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+{% if estacion is defined %}
+	{# MODAL AGREGAR PERSONAL #}
+	{% if is_granted('PERSONAL_CREAR') or is_granted('MANTENIMIENTO_CREAR') or is_granted('MANTENIMIENTO_EDITAR') %}
+		<div class="modal fade" id="modalActionAgregar{{personal.id}}" aria-hidden="true" aria-labelledby="modalActionAgregarLabel" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="modalActionAgregarLabel">Agregar usuario al equipo
+							{% if equipo is defined %}
+							<b>	{{ equipo.nombre }} </b>
+              {% endif %}
+              </h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Está por agregar el usuario 
+							<b>{{ personal.apellido ~ ', ' ~ personal.nombre }}</b>.<br></p>
+
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-primary" type="submit" onclick="window.location='{{ path('agregar_personal_equipo', {'id': estacion, 'idP':personal.id}) }}'">Confirmar</button>
+
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="fas fa-redo"></i>&nbsp
+							Cancelar
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+{% endif %}
+
+{% if estacionTraspaso is defined %}
+{# MODAL TRASPASO PERSONAL #}
+{% if is_granted('PERSONAL_CREAR') or is_granted('MANTENIMIENTO_CREAR') or is_granted('MANTENIMIENTO_EDITAR') %}
+	<div class="modal fade" id="modalActionTraspaso{{personal.id}}" aria-hidden="true" aria-labelledby="modalActionTraspasoLabel" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="modalActionTraspasoLabel">Traspaso del equipo
+						{% if equipo is defined %}
+							<b>	{{ equipo.nombre }} </b>
+						{% endif %}
+					</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>Está por enviar el equipo al usuario 
+						<b>{{ personal.apellido ~ ', ' ~ personal.nombre }}</b>.<br></p>
+
+				</div>
+				<div class="modal-footer">
+						<button class="btn btn-primary" type="submit" onclick="window.location='{{ path('traspaso_personal_equipo', {'id': estacionTraspaso, 'idP':personal.id}) }}'">Confirmar Traspaso</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="fas fa-redo"></i>&nbsp
+						 Cancelar
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+{% endif %}

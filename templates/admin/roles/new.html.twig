@@ -1,0 +1,22 @@
+{% extends "base/index.html.twig" %}
+
+{% block headerMain %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h4 mb-0 text-dark"><b>{% if currentPath == 'new_role' %} Nuevo rol {% else %} Editar rol {% endif %}</b></h1>
+        <div class="align-items-center justify-content-end">
+          <a href="{{ path('index_roles') }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fa fa-reply"></i> &nbsp; Ver el listado
+          </a>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block rowMain %}
+  <div class="col">
+    <div class="card">
+        <div class="card-body">
+            {{ include('admin/roles/_form.html.twig') }}
+        </div>
+    </div>
+  </div>
+{% endblock rowMain %}

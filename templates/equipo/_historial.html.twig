@@ -1,0 +1,255 @@
+{% extends 'base/index.html.twig' %}
+
+{% block title %}Historial del Equipo {% endblock %}
+
+{% block headerMain %}
+	<div class="d-sm-flex align-items-center justify-content-between mb-4">
+		<h1 class="h3 mb-3 text-dark">
+			<b>Historial del Equipo: {{ equipo.nombre }}</b>
+		</h1>
+		<div class="align-items-center justify-content-end">
+			<a href="{{ path('show_equipo', {'id': equipo.id }) }}" class="d-md-inline-block btn btn-sm btn-primary shadow-sm">
+				<i class="fa fa-reply"></i>&nbsp; Volver al equipo
+			</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block rowMain %}
+	<div class="container d-inline-flex">
+		{# HISTORIAL USUARIOS #}
+		<div class="card mb-3 border-success me-3" style="width: 60rem;">
+			{{ include('equipo/_filtro_historial_usuario.html.twig', {'form': formFiltroUsuario}) }}
+			<div class="card-body">
+				<h5 class="card-title text-center">
+					<b>Historial de Usuarios</b>
+				</h5>
+				<hr class="mx-auto" width="40%">
+				<div class="row justify-content-md-center">
+					<div class="table-responsive mt-3" style="max-height: 300px; overflow-y: auto;">
+						<table class="display table table-hover table-striped">
+							{# Títulos de tabla #}
+							<thead class="text-bg-secondary sticky-top">
+								{# Usuario #}
+								<th scope="col" class="font-weight-semi-bold py-2" style="cursor: auto;">
+									Usuario
+								</th>
+								{# Fecha Inicio #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Inicio
+								</th>
+								{# Fecha Fin #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Fin
+								</th>
+								{# Usuario que modificó #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Modificado Por
+								</th>
+							</thead>
+							{# Contenido de tabla #}
+							<tbody>
+								{% for usuario in usuariosPagination %}
+									<tr class="td-cursor cursorPointer">
+										{# Usuario #}
+										<td class="align-middle td-cursor cursorPointer {{ usuario.isActual ? 'fw-bold' : '' }}">{{ usuario.usuario.nombre~', '~usuario.usuario.apellido }}</td>
+										{# Fecha Inicio #}
+										<td class="align-middle text-center td-cursor cursorPointer">{{ usuario.fechaInicio|date('d/m/Y') }}</td>
+										{# Fecha Fin #}
+										<td class="align-middle text-center td-cursor cursorPointer">
+											{% if usuario.isActual %}
+												<b>Actualidad</b>
+											{% else %}
+												{{ usuario.fechaFin|date('d/m/Y') }}
+											{% endif %}
+										</td>
+										{# Usuario que modificó #}
+										<td class="align-middle text-center td-cursor cursorPointer">{{ usuario.modificadoPor }}</td>
+									</tr>
+								{% else %}
+									<tr class="text-center">
+										<td class="align-middle" colspan="4">- Sin Registros -</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						{# END Contenido de tabla #}
+					</div>
+				</div>
+
+				{# Totalizador #}
+				<div class="col">
+					<div class="row justify-content-between m-0 w-100 mt-2">
+						<div class="col-4">
+							<div class="d-flex mb-2 mb-md-0 d-inline-flex">
+								{{ usuariosPagination.getTotalItemCount >= 1 ? usuariosPagination.getTotalItemCount : ''}}
+								{{ usuariosPagination.getTotalItemCount == 1 ? " registro" : usuariosPagination.getTotalItemCount > 1 ? " registros en total" : ''}}
+							</div>
+						</div>
+					</div>
+				</div>
+				{# END Totalizador #}
+			</div>
+		</div>
+
+		{# HISTORIAL TRAZABILIDAD IP Y HOST #}
+		<div class="card mb-3 border-success me-3" style="width: 60rem;">
+			{{ include('equipo/_filtro_historial_identificacion.html.twig', {'form': formFiltroIpHost}) }}
+			<div class="card-body">
+				<h5 class="card-title text-center">
+					<b>Historial IP y Host</b>
+				</h5>
+				<hr class="mx-auto" width="60%">
+				<div class="row justify-content-md-center">
+					<div class="table-responsive mt-3" style="max-height: 300px; overflow-y: auto;">
+						<table class="display table table-hover table-striped td-cursor">
+							{# Títulos de tabla #}
+							<thead class="text-bg-secondary sticky-top">
+								{# Usuario #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									IP
+								</th>
+								{# Host #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Host
+								</th>
+								{# Fecha Inicio #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Inicio
+								</th>
+								{# Fecha Fin #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Fin
+								</th>
+								{# Usuario que modificó #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Modificado Por
+								</th>
+							</thead>
+							{# Contenido de tabla #}
+							<tbody>
+								{% if ipHostPagination is not empty %}
+									{% for ipHost in ipHostPagination %}
+										<tr class="align-middle td-cursor cursorPointer text-center">
+											<td class=" ">{{ ipHost.ip|default('-') }}</td>
+											<td>{{ ipHost.host|default('-') }}</td>
+											<td>{{ ipHost.fechaInicio|date('d/m/Y') }}</td>
+											<td>
+												{% if ipHost.fechaFin %}
+													{{ ipHost.fechaFin|date('d/m/Y') }}
+												{% else %}
+													<b>Actualidad</b>
+												{% endif %}
+											</td>
+											<td>{{ ipHost.modificadoPor|default('-') }}</td>
+										</tr>
+									{% endfor %}
+								{% else %}
+									<tr class="text-center align-middle">
+										<td colspan="5">- Sin Registros -</td>
+									</tr>
+								{% endif %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				{# END Contenido de tabla #}
+				{# Totalizador #}
+				<div class="col">
+					<div class="row justify-content-between m-0 w-100 mt-2">
+						<div class="col-4">
+							<div class="d-flex mb-2 mb-md-0 d-inline-flex">
+								{{ ipHostPagination.getTotalItemCount >= 1 ? ipHostPagination.getTotalItemCount : ''}}
+								{{ ipHostPagination.getTotalItemCount == 1 ? " registro" : ipHostPagination.getTotalItemCount > 1 ? " registros en total" : ''}}
+							</div>
+						</div>
+					</div>
+				</div>
+				{# END Totalizador #}
+			</div>
+		</div>
+
+	</div>
+
+	<div class="container d-inline-flex">
+		{# HISTORIAL UBICACIONES #}
+		<div class="card mb-3 border-success me-3" style="width: 100rem;">
+
+			{{ include('equipo/_filtro_historial_ubicacion.html.twig', {'form': formFiltroUbicacion}) }}
+
+			<div class="card-body">
+
+				<h5 class="card-title text-center">
+					<b>Historial de Ubicaciones</b>
+				</h5>
+
+				<hr class="mx-auto" width="60%">
+
+				<div class="row justify-content-md-center">
+					<div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
+						<table class="display table table-hover table-striped td-cursor">
+							{# Títulos de tabla #}
+							<thead class="text-bg-secondary sticky-top">
+								{# UBICACIÓN #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Ubicación
+								</th>
+								{# FECHA INICIO #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Inicio
+								</th>
+								{# FECHA FIN #}
+								<th scope="col" class="text-center font-weight-semi-bold py-2" style="cursor: auto;">
+									Fin
+								</th>
+							</thead>
+							{# Contenido de tabla #}
+							<tbody>
+								{% if ubicacionPagination is not empty %}
+									{% for ubicaciones in ubicacionPagination %}
+										<tr class="align-middle text-center td-cursor cursorPointer">
+											<td>{{ ubicaciones.ubicacion.nomenclatura|default('-') }}</td>
+											<td>{{ ubicaciones.fechaInicio|date('d/m/Y') }}</td>
+											<td>
+												{% if ubicaciones.fechaFin %}
+													{{ ubicaciones.fechaFin|date('d/m/Y') }}
+												{% else %}
+													<b>Actualidad</b>
+												{% endif %}
+											</td>
+										</tr>
+									{% endfor %}
+								{% else %}
+									<tr class="text-center align-middle">
+										<td colspan="3">- Sin Registros -</td>
+									</tr>
+								{% endif %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				{# END Contenido de tabla #}
+
+				{# Paginación #}
+				<div class="col">
+					<div class="row justify-content-between m-0 w-100 mt-2">
+						<div class="col-4">
+							<div class="d-flex mb-2 mb-md-0 d-inline-flex">
+								{{ ubicacionPagination.getTotalItemCount >= 1 ? ubicacionPagination.getTotalItemCount : ''}}
+								{{ ubicacionPagination.getTotalItemCount == 1 ? " registro" : ubicacionPagination.getTotalItemCount > 1 ? " registros en total" : ''}}
+							</div>
+						</div>
+						<div class="col-4 mb-4 text-end">
+							<div class="d-inline-flex align-items-end">
+								{{ knp_pagination_render(ubicacionPagination) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				{# END Paginación #}
+
+			</div>
+		</div>
+
+	</div>
+{% endblock %}

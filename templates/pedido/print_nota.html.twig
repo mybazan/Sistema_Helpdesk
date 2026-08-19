@@ -1,0 +1,177 @@
+
+{% block nota %}
+<head>
+    <title>
+        {% block title %}Detalles del Pedido{% endblock %}
+    </title>
+    <meta charset="utf-8">
+    <meta name="pdfviewer" content="width=device-width, initial-scale=0.60, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+</head>
+<style>
+    @page {
+        size: A4;
+        padding: 0;
+        margin: 0 auto;
+        width: 21cm;
+        height: 29.7cm;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+    } 
+    /* ESTILO PARA CARÁTULA */
+    .detalles{
+        height: 24.7cm;
+        padding: 0px;
+        margin: 0px;
+        font-family: helvetica !important;
+        border:0px double #050404 !important;
+        margin-top: 1.5cm;
+        margin-left: 2.5cm;
+        margin-right: 1cm;
+        margin-bottom: 1.5cm;
+    }
+    .detalles-encabezado-imagen{
+        margin: 10 0 0 0;
+        padding: 0px;
+        text-align: center;
+    }
+    .detalles-encabezado-texto{
+        text-align: center;
+    }
+    .detalles-encabezado-texto > h5 {
+        margin: 0 0 2 0;
+    }
+    .detalles-encabezado-texto > h4 {
+        margin: 5 0 5 0;
+    }
+    .fecha-nota {
+        text-align: right;
+        margin: 10 35 10 0;
+    }
+    hr{
+        margin: 0 30 0 30;
+    }
+    .detalles-cuerpo{
+        margin: 0.3cm 0.5cm 0cm 0.5cm;
+        text-align: center;
+    }
+    .detalles-cuerpo > h2 {
+        margin-bottom: 25px;
+    }
+    .detalles-cuerpo > h3 {
+        margin-top: 300px;
+    }
+    th {
+        padding: 0.2cm 0.2cm 0.2cm 0.2cm;
+    }
+    .tabla-fila > td {
+        padding: 0.1cm 0cm 0.1cm 0.2cm;
+        font-size: 0.8em;
+    }
+    .tabla-fila > td:first-child {
+        width: 5cm;
+        text-align: right;
+    }
+    .tabla-fila {
+        border: 1px solid gray;
+        border-right: none;
+        vertical-align: top;
+    }
+    .detalles-cuerpo-operaciones{
+        width: 6cm;
+    }
+    .tabla-fila-titulos{
+        text-align: center;
+        padding: 0.1cm 0cm 0.1cm 0.2cm;
+        font-size: 0.9em;
+        font-weight: bold;
+        background-color: grey;
+    }
+    .tabla-fila-contenido{
+        text-align: center;
+        padding: 0.1cm 0cm 0.1cm 0.2cm;
+        font-size: 0.7em;
+        border-bottom: 1px solid gray;
+    }
+    .tabla-fila-titulos > td {
+        padding: 0.1cm 0cm 0.1cm 0.2cm;
+        font-size: 0.8em;
+        width: 2.7cm;
+        border-bottom: 2px solid black;
+    }
+    .signature {
+        font-family: 'Franklin Gothic Book', 'Bahnschrift Light',  sans-serif; 
+        text-align: right;
+    }
+
+    .signature p {
+        display: inline-block;
+        border-top: 1px solid black;
+        padding-top: 1px; 
+        margin-top: 100px; 
+        margin-right: 50px; 
+        font-size:12px;
+    }
+</style>
+
+{# CARÁTULA #}
+<body>
+    <div class="detalles">
+        <div class="detalles-encabezado-texto">
+            <h5>SISTEMA DE SOPORTE</h5>
+            <h5>GESTIÓN DE TICKETS</h5>
+             
+        </div>
+            <div class="detalles-encabezado-imagen">
+                <img src="{{ imageSrc }}" width="80">
+            <h5 class="fecha-nota">{{ "now"|date("d") }} de {{ month }} del {{ "now"|date("Y") }} 
+            </div>
+        <div class="detalles-encabezado-texto">
+            <h4>RESOLUCIÓN DEL PEDIDO</h4>
+        </div>
+        <div class="detalles-cuerpo">
+            <table style="border-collapse: collapse; border: 2px solid black; width: 100%;">
+                <tr class="tabla-fila">
+                    <td><b>TICKET</b>:</td>
+                    <td>  N°{{ pedido.id }} </td>
+                </tr>
+                <tr class="tabla-fila">
+                    <td><b>SOLICITANTE</b>:</td>
+                    <td>{{ pedido.solicitanteDisplay }}</td>
+                </tr>
+                <tr class="tabla-fila">
+                    <td><b>SOLICITUD</b>:</td>
+                    <td>{{ pedido.solicitud is not null ? pedido.solicitud : ' - ' }}</td>
+                </tr>
+                <tr class="tabla-fila">
+                    <td><b>UBICACIÓN</b>:</td>
+                    <td>{{ pedido.ubicacionDisplay }}</td>
+                </tr>
+                <tr class="tabla-fila">
+                    <td><b>SOLUCIÓN</b>:</td>
+                    <td> {{ pedido.solucion }}</td>
+                </tr>
+              <tr class="tabla-fila">
+                    <td><b>FECHA SOLUCIÓN</b>:</td>
+                    <td>  {{ fechaResuelto|date('d/m/Y') is not null ? fechaResuelto|date('d/m/Y') : ' - ' }}</td>
+                </tr>
+                <tr class="tabla-fila">
+                    <td><b>TECNICO ASIGNADO</b>:</td>
+                    <td> {{ pedido.tecnicoAsignado }}</td>
+                </tr>
+                
+                <tr class="tabla-fila">
+                    <td><b>OBSERVACIÓN</b>:</td>
+                    <td> {{ pedido.observacion ? pedido.observacion : '-' }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="signature">
+            <p>Firma del Responsable a Cargo</p>
+        </div>
+    </div>
+</body>
+{% endblock %}
+

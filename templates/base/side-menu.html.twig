@@ -1,0 +1,93 @@
+<!-- Siderbar Logo -->
+<a class="quick-access clearfix sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('inicio_index') }}">
+	<div class="sidebar-brand-icon">
+		<img id="logo-side" class="logo-side" src="{{ asset('base/img/logo.png') }}" alt="Sistema de Soporte" width="80">
+	</div>
+</a>
+
+<!-- Divider -->
+<hr
+class="sidebar-divider my-0">
+
+<!-- Siderbar -->
+{% if is_granted('VER_INICIO') %}
+	<li class="nav-item {{currentPath == 'inicio_index' ? 'active' : ''}}">
+		<a class="nav-link" href="{{ path('inicio_index') }}">
+			<i class="fa fa-home"></i>
+			<span>Inicio</span>
+		</a>
+	</li>
+	<!-- Divider -->
+	<hr class="sidebar-divider my-0">
+{% endif %}
+
+<!-- Gestión de Pedidos -->
+{% if is_granted('TICKET_VER') %}
+	<li class="nav-item {{currentPath == 'ticket_index' ? 'active' : ''}}">
+		<a class="nav-link" href="{{ path('ticket_index') }}">
+			<i class="fas fa-receipt me-2 ms-1"></i>
+			<span>Tickets de Soporte</span>
+		</a>
+	</li>
+	<!-- Divider -->
+	<hr class="sidebar-divider my-0">
+{% endif %}
+
+<!-- Gestión de Equipos -->
+{% if is_granted('EQUIPO_VER') %}
+	<li class="nav-item {{ currentPath in opcionesEquipo ? 'active' : '' }}">
+		<a class="nav-link" href="{{ path('index_equipo') }}">
+			<i class="fa fa-desktop"></i>
+			<span>Equipos</span>
+		</a>
+	</li>
+	<!-- Divider -->
+	<hr class="sidebar-divider my-0">
+{% endif %}
+
+
+<!-- Administración -->
+{% if is_granted('USERS_VER') or is_granted('ROLES_VER') or is_granted('TIPO_EQUIPO_VER') or is_granted('PERSONAL_VER') or is_granted('UBICACION_VER') or is_granted('TICKET_ASIGNAR') %}
+	<li class="nav-item {{ currentPath in opcionesAdministracion ? 'active' : '' }}">
+		<a class="nav-link collapsed" data-bs-toggle="collapse" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+			<i class="fa fa-cog me-2"></i>
+			<span>Administración</span>
+		</a>
+		<div id="collapseTwo" class="collapse {{ currentPath in opcionesAdministracion ? 'show' : '' }}">
+			<div class="bg-white py-2 collapse-inner rounded">
+				{% if is_granted('USERS_VER') %}
+					<a class="collapse-item" href="{{ path('app_admin_users') }}">
+						<i class="fa fa-user text-gray-600" style="width:10%;"></i>&nbsp; Usuarios
+					</a>
+				{% endif %}
+				{% if is_granted('ROLES_VER') %}
+					<a class="collapse-item" href="{{ path('index_roles') }}">
+						<i class="fas fa-key text-gray-600" style="width:10%;"></i>&nbsp; Roles y Permisos
+					</a>
+				{% endif %}
+				{% if is_granted('UBICACION_VER') %}
+					<a class="collapse-item" href="{{ path('ubicacion_index') }}">
+						<i class="fas fa-map-marker-alt text-gray-600" style="width:10%;"></i>&nbsp; Ubicaciones
+					</a>
+				{% endif %}
+				{% if is_granted('TIPO_EQUIPO_VER') %}
+					<a class="collapse-item" href="{{ path('tipo_equipo_index') }}">
+						<i class="fas fa-laptop text-gray-600" style="width:10%;"></i>&nbsp; Tipos de Equipos
+					</a>
+				{% endif %}
+				{% if is_granted('PERSONAL_VER') %}
+					<a class="collapse-item" href="{{ path('personal_index') }}">
+						<i class="fas fa-user-tie text-gray-600" style="width:10%;"></i>&nbsp; Personal
+					</a>
+				{% endif %}
+				{% if is_granted('TICKET_ASIGNAR') %}
+					<a class="collapse-item" href="{{ path('pedido_estado_index') }}">
+						<i class="fas fa-list-alt text-gray-600" style="width:10%;"></i>&nbsp; Estados de Ticket
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</li>
+	<!-- Divider -->
+	<hr class="sidebar-divider my-0">
+{% endif %}
